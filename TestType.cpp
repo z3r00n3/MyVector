@@ -59,7 +59,7 @@ TestType::~TestType()
 	if (_str)
 	{
 #ifdef _DEBUG
-		std::cout << "TestType (_str) destruction process..." << std::endl;
+		std::cout << "...TestType (_str) destruction process..." << std::endl;
 #endif // _DEBUG
 
 		delete[] _str;
@@ -103,7 +103,7 @@ TestType& TestType::operator=(const TestType& other)
 
 std::ostream& operator<<(std::ostream& out_stream, const TestType& obj)
 {
-	out_stream << obj._int << " " << (obj._str ? obj._str : "nullptr") << " | ";
+	out_stream << "{ " << obj._int << ", " << (obj._str ? obj._str : "nullptr") << " }";
 
 	return out_stream;
 }

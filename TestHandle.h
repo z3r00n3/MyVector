@@ -32,7 +32,6 @@ void PrintMyVectorInfo(const My::Vector<Type>& vec)
 	std::cout << "Size is: " << vec.size() << std::endl;
 	std::cout << "Capacity is: " << vec.capacity() << std::endl;
 
-	//std::cout << std::endl;
 	PrintDividingLine();
 }
 
@@ -56,6 +55,5 @@ void PrintStdVectorInfo(const std::vector<Type>& vec)
 	std::cout << "Size is: " << vec.size() << std::endl;
 	std::cout << "Capacity is: " << vec.capacity() << std::endl;
 
-	//std::cout << std::endl;
 	PrintDividingLine();
 }
