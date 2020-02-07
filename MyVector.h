@@ -1,21 +1,21 @@
 #pragma once
 
-namespace my
+namespace My
 {
 	template<typename Type>
-	class vector
+	class Vector
 	{
 	public:
 		// Constructors and Destructor
-		vector() {};
-		vector(std::size_t size);
-		vector(std::size_t size, Type default_value);
-		vector(std::initializer_list<Type> list);
-		vector(const vector<Type>& source);
-		~vector();
+		Vector() { std::cout << "default constructor" << std::endl; };
+		Vector(std::size_t size);
+		Vector(std::size_t size, Type default_value);
+		Vector(std::initializer_list<Type> list);
+		Vector(const Vector<Type>& other);
+		~Vector();
 
 		// Member functions
-		vector<Type>& operator=(const vector<Type>& source);
+		Vector<Type>& operator=(const Vector<Type>& other);
 
 		// Element access
 		      Type& at(std::size_t pos);
@@ -42,6 +42,7 @@ namespace my
 		void clear();
 		void resize(std::size_t new_size);
 		void resize(std::size_t new_size, const Type& value);
+		void swap(Vector<Type>& other);
 
 	private:
 		Type* _first;
@@ -54,7 +55,7 @@ namespace my
 		Type* _realloc(std::size_t size, std::size_t new_capacity);
 		void _copy_data(Type* destination, const Type* source, std::size_t size);
 		void _resize(std::size_t new_size);
-		std::size_t _calculate_new_capacity(std::size_t size);
+		std::size_t _calculate_new_capacity(std::size_t size) const;
 	};
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -62,46 +63,43 @@ namespace my
 	///////////////////////////////////////////////////////////////////////////////
 
 	template<typename Type>
-	vector<Type>::vector(std::size_t size)
+	Vector<Type>::Vector(std::size_t size)
 	{
+		std::cout << "(size) constructor" << std::endl;
 		_alloc(size, size);
 	}
 
 	template<typename Type>
-	vector<Type>::vector(std::size_t size, Type default_value)
+	Vector<Type>::Vector(std::size_t size, Type default_value)
 	{
+		std::cout << "(size, value) constructor" << std::endl;
 		_alloc(size, size);
 		std::fill(_first, _last, default_value);
 	}
 
 	template<typename Type>
-	vector<Type>::vector(std::initializer_list<Type> list)
+	Vector<Type>::Vector(std::initializer_list<Type> list)
 	{
+		std::cout << "(initialiser_list) constructor" << std::endl;
 		_alloc(list.size(), list.size());
+		_copy_data(_first, list.begin(), size());
+	}
 
-		for (std::size_t i = 0; i < list.size(); i++)
+	template<typename Type>
+	Vector<Type>::Vector(const Vector<Type>& other)
+	{
+		std::cout << "copy constructor" << std::endl;
+		if (this != &other)
 		{
-			*(_first + i) = *(list.begin() + i);
+			_alloc(other.size(), other.capacity());
+			_copy_data(_first, other.data(), size());
 		}
 	}
 
 	template<typename Type>
-	vector<Type>::vector(const vector<Type>& source)
+	Vector<Type>::~Vector()
 	{
-		if (this != &source)
-		{
-			_alloc(source.size(), source.capacity());
-
-			for (std::size_t i = 0; i < size(); i++)
-			{
-				*(_first + i) = source[i];
-			}
-		}
-	}
-
-	template<typename Type>
-	vector<Type>::~vector()
-	{
+		std::cout << "destructor" << std::endl;
 		if (_first)
 		{
 			delete[] _first;
@@ -113,37 +111,33 @@ namespace my
 	///////////////////////////////////////////////////////////////////////////////
 
 	template<typename Type>
-	vector<Type>& vector<Type>::operator=(const vector<Type>& source)
+	Vector<Type>& Vector<Type>::operator=(const Vector<Type>& other)
 	{
+		std::cout << "operator=" << std::endl;
 		std::size_t capacity = 0;
 
-		if (this->size() < source.size() && this->capacity() < source.capacity())
+		if (this != &other)
 		{
-			capacity = source.size();
-		}
-		else
-		{
-			capacity = this->capacity();
-		}
-
-		if (this != &source)
-		{
-			if (source.size() != size())
+			if (size() != other.size())
 			{
+				if (size() < other.size() && this->capacity() < other.capacity())
+				{
+					capacity = other.size();
+				}
+				else
+				{
+					capacity = this->capacity();
+				}
+
 				if (_first)
 				{
 					delete[] _first;
 				}
 
-				_alloc(source.size(), capacity);
+				_alloc(other.size(), capacity);
 			}
 
-			_copy_data(_first, source.data(), size());
-
-			/*for (std::size_t i = 0; i < size(); i++)
-			{
-				*(_first + i) = source[i];
-			}*/
+			_copy_data(_first, other.data(), size());
 		}
 
 		return *this;
@@ -154,7 +148,7 @@ namespace my
 	///////////////////////////////////////////////////////////////////////////////
 
 	template<typename Type>
-	Type& vector<Type>::at(std::size_t pos)
+	Type& Vector<Type>::at(std::size_t pos)
 	{
 		if (_first && size() > pos)
 		{
@@ -167,7 +161,7 @@ namespace my
 	}
 
 	template<typename Type>
-	const Type& vector<Type>::at(std::size_t pos) const
+	const Type& Vector<Type>::at(std::size_t pos) const
 	{
 		if (_first && size() > pos)
 		{
@@ -180,49 +174,49 @@ namespace my
 	}
 
 	template<typename Type>
-	inline Type& vector<Type>::operator[](std::size_t idx)
+	inline Type& Vector<Type>::operator[](std::size_t idx)
 	{
 		return *(_first + idx);
 	}
 
 	template<typename Type>
-	inline const Type& vector<Type>::operator[](std::size_t idx) const
+	inline const Type& Vector<Type>::operator[](std::size_t idx) const
 	{
 		return *(_first + idx);
 	}
 
 	template<typename Type>
-	inline Type& vector<Type>::front()
+	inline Type& Vector<Type>::front()
 	{
 		return *_first;
 	}
 
 	template<typename Type>
-	inline const Type& vector<Type>::front() const
+	inline const Type& Vector<Type>::front() const
 	{
 		return *_first;
 	}
 
 	template<typename Type>
-	inline Type& vector<Type>::back()
+	inline Type& Vector<Type>::back()
 	{
 		return *(_last - 1);
 	}
 
 	template<typename Type>
-	inline const Type& vector<Type>::back() const
+	inline const Type& Vector<Type>::back() const
 	{
 		return *(_last - 1);
 	}
 
 	template<typename Type>
-	inline Type* vector<Type>::data()
+	inline Type* Vector<Type>::data()
 	{
 		return _first;
 	}
 
 	template<typename Type>
-	inline const Type* vector<Type>::data() const
+	inline const Type* Vector<Type>::data() const
 	{
 		return _first;
 	}
@@ -232,25 +226,25 @@ namespace my
 	///////////////////////////////////////////////////////////////////////////////
 
 	template<typename Type>
-	inline bool vector<Type>::empty() const
+	inline bool Vector<Type>::empty() const
 	{
 		return _first == _last ? true : false;
 	}
 
 	template<typename Type>
-	inline std::size_t vector<Type>::size() const
+	inline std::size_t Vector<Type>::size() const
 	{
 		return _last - _first;
 	}
 
 	template<typename Type>
-	inline std::size_t vector<Type>::capacity() const
+	inline std::size_t Vector<Type>::capacity() const
 	{
 		return _capacity_last - _first;
 	}
 
 	template<typename Type>
-	void vector<Type>::reserve(std::size_t new_capacity)
+	void Vector<Type>::reserve(std::size_t new_capacity)
 	{
 		if (new_capacity > capacity())
 		{
@@ -259,7 +253,7 @@ namespace my
 	}
 
 	template<typename Type>
-	void vector<Type>::shrink_to_fit()
+	void Vector<Type>::shrink_to_fit()
 	{
 		if (capacity() > size())
 		{
@@ -272,7 +266,7 @@ namespace my
 	///////////////////////////////////////////////////////////////////////////////
 
 	template<typename Type>
-	void vector<Type>::push_back(const Type& value)
+	void Vector<Type>::push_back(const Type& value)
 	{
 		if (capacity() - size() == 0)
 		{
@@ -284,31 +278,46 @@ namespace my
 	}
 
 	template<typename Type>
-	inline void vector<Type>::pop_back()
+	inline void Vector<Type>::pop_back()
 	{
 		_last--;
 	}
 
 	template<typename Type>
-	inline void vector<Type>::clear()
+	inline void Vector<Type>::clear()
 	{
 		_last = _first;
 	}
 
 	template<typename Type>
-	void vector<Type>::resize(std::size_t new_size)
+	void Vector<Type>::resize(std::size_t new_size)
 	{
 		_resize(new_size);
 	}
 
 	template<typename Type>
-	void vector<Type>::resize(std::size_t new_size, const Type& value)
+	void Vector<Type>::resize(std::size_t new_size, const Type& value)
 	{
 		std::size_t size = this->size();
 
 		_resize(new_size);
-
 		std::fill(_first + size, _first + new_size, value);
+	}
+
+	template<typename Type>
+	void Vector<Type>::swap(Vector<Type>& other)
+	{
+		Type* tmp_first         = _first;
+		Type* tmp_last          = _last;
+		Type* tmp_capacity_last = _capacity_last;
+		
+		_first         = other.data();
+		_last          = _first + other.size();
+		_capacity_last = _first + other.capacity();
+		
+		other._first         = tmp_first;
+		other._last          = tmp_last;
+		other._capacity_last = tmp_capacity_last;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -316,7 +325,7 @@ namespace my
 	///////////////////////////////////////////////////////////////////////////////
 
 	template<typename Type>
-	Type* vector<Type>::_alloc(std::size_t size, std::size_t capacity)
+	Type* Vector<Type>::_alloc(std::size_t size, std::size_t capacity)
 	{
 		_first         = new Type[capacity]();
 		_last          = _first + size;
@@ -326,14 +335,13 @@ namespace my
 	}
 
 	template<typename Type>
-	Type* vector<Type>::_realloc(std::size_t size, std::size_t new_capacity)
+	Type* Vector<Type>::_realloc(std::size_t size, std::size_t new_capacity)
 	{
 		Type* new_memory = new Type[new_capacity]();
 
 		if (_first)
 		{
 			_copy_data(new_memory, _first, size);
-
 			delete[] _first;
 		}
 
@@ -345,7 +353,7 @@ namespace my
 	}
 
 	template<typename Type>
-	void vector<Type>::_copy_data(Type* destination, const Type* source, std::size_t size)
+	void Vector<Type>::_copy_data(Type* destination, const Type* source, std::size_t size)
 	{
 		for (std::size_t i = 0; i < size; i++)
 		{
@@ -354,7 +362,7 @@ namespace my
 	}
 
 	template<typename Type>
-	void vector<Type>::_resize(std::size_t new_size)
+	void Vector<Type>::_resize(std::size_t new_size)
 	{
 		if (new_size == size())
 		{
@@ -369,7 +377,7 @@ namespace my
 	}
 
 	template<typename Type>
-	inline std::size_t vector<Type>::_calculate_new_capacity(std::size_t size)
+	inline std::size_t Vector<Type>::_calculate_new_capacity(std::size_t size) const
 	{
 		return size > 1 ? static_cast<std::size_t>(size * _capacity_multiplier) : ++size;
 	}
