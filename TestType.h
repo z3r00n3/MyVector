@@ -1,18 +1,19 @@
 #pragma once
 
-namespace Test
+class TestType
 {
-	class TestType
-	{
-	public:
-		TestType();
-		TestType(int i, char* s);
-		~TestType();
+public:
+	TestType();
+	TestType(int i, char* s);
+	TestType(const TestType& other);
+	~TestType();
 
-		void print_data();
+	TestType& operator=(const TestType& other);
 
-	private:
-		int   _int;
-		char* _str;
-	};
-}
+	friend std::ostream& operator<<(std::ostream& out_stream, const TestType& obj);
+
+private:
+	int   _int;
+	char* _str;
+};
+

@@ -2,7 +2,7 @@
 
 #include "TestHandle.h"
 
-void Test::PrintDividingLine()
+void PrintDividingLine()
 {
 	for (std::size_t i = 0; i < 80; i++)
 	{

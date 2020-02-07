@@ -46,6 +46,7 @@ namespace My
 		void swap(Vector<Type>& other);
 	
 	private:
+		void* _raw_memory;
 		Type* _first;
 		Type* _last;
 		Type* _capacity_last;
@@ -82,7 +83,11 @@ namespace My
 		std::cout << "MyVector (size) constructor" << std::endl;
 #endif // _DEBUG
 
-		_alloc(size, size);
+		//_alloc(size, size);
+		_raw_memory = _allocc(sizeof(Type) * size);
+		_first = static_cast<Type*>(new(_raw_memory) Type[size]);
+		_last = _first + size;
+		_capacity_last = _first + size;
 	}
 
 	template<typename Type>
@@ -92,8 +97,17 @@ namespace My
 		std::cout << "MyVector (size, value) constructor" << std::endl;
 #endif // _DEBUG
 
-		_alloc(size, size);
-		std::fill(_first, _last, default_value);
+		//_alloc(size, size);
+		//std::fill(_first, _last, default_value);
+
+		_raw_memory = _allocc(sizeof(Type) * size);
+		_first = static_cast<Type*>(_raw_memory);
+		for (std::size_t i = 0; i < size; i++)
+		{
+			new(_first + i) Type(default_value);
+		}
+		_last = _first + size;
+		_capacity_last = _first + size;
 	}
 
 	template<typename Type>
@@ -103,8 +117,19 @@ namespace My
 		std::cout << "MyVector (initialiser_list) constructor" << std::endl;
 #endif // _DEBUG
 
-		_alloc(list.size(), list.size());
-		_copy_data(_first, list.begin(), size());
+		//_alloc(list.size(), list.size());
+		//_copy_data(_first, list.begin(), size());
+
+		_raw_memory = _allocc(sizeof(Type) * list.size());
+		_first = static_cast<Type*>(new(_raw_memory) Type[list.size()]);
+		//_first = static_cast<Type*>(_raw_memory);
+		/*for (std::size_t i = 0; i < list.size(); i++)
+		{
+			new(_first + i) Type;
+		}*/
+		_copy_data(_first, list.begin(), list.size());
+		_last = _first + list.size();
+		_capacity_last = _first + list.size();
 	}
 
 	template<typename Type>
@@ -116,8 +141,14 @@ namespace My
 
 		if (this != &other)
 		{
-			_alloc(other.size(), other.capacity());
-			_copy_data(_first, other.data(), size());
+			//_alloc(other.size(), other.capacity());
+			//_copy_data(_first, other.data(), size());
+
+			_raw_memory = _allocc(sizeof(Type) * other.size());
+			_first = static_cast<Type*>(new(_raw_memory) Type[other.size()]);
+			_copy_data(_first, other.data(), other.size());
+			_last = _first + other.size();
+			_capacity_last = _first + other.size();
 		}
 	}
 
@@ -128,10 +159,19 @@ namespace My
 		std::cout << "MyVector destructor" << std::endl;
 #endif // _DEBUG
 
-		if (_first)
+		if (_raw_memory && _first)
+		{
+			for (std::size_t i = 0; i < size(); i++)
+			{
+				(_first + i)->~Type();
+			}
+			::operator delete[](_raw_memory, _first);
+		}
+
+		/*if (_first)
 		{
 			delete[] _first;
-		}
+		}*/
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -160,15 +200,31 @@ namespace My
 					capacity = this->capacity();
 				}
 
-				if (_first)
+				/*if (_first)
 				{
 					delete[] _first;
+				}*/
+
+				if (_raw_memory && _first)
+				{
+					for (std::size_t i = 0; i < size(); i++)
+					{
+						(_first + i)->~Type();
+					}
+					::operator delete[](_raw_memory, _first);
 				}
 
-				_alloc(other.size(), capacity);
+				//_alloc(other.size(), capacity);
+
+				_raw_memory = _allocc(sizeof(Type) * capacity);
+				_first = static_cast<Type*>(new(_raw_memory) Type[other.size()]);
+				//_copy_data(_first, other.data(), other.size());
+				_last = _first + other.size();
+				_capacity_last = _first + capacity;
 			}
 
-			_copy_data(_first, other.data(), size());
+			_copy_data(_first, other.data(), other.size());
+			//_copy_data(_first, other.data(), size());
 		}
 
 		return *this;
@@ -185,15 +241,29 @@ namespace My
 
 		if (size() != list.size())
 		{
-			if (_first)
+			/*if (_first)
 			{
 				delete[] _first;
+			}*/
+
+			if (_raw_memory && _first)
+			{
+				for (std::size_t i = 0; i < size(); i++)
+				{
+					(_first + i)->~Type();
+				}
+				::operator delete[](_raw_memory, _first);
 			}
 
-			_alloc(list.size(), list.size() > capacity ? list.size() : capacity);
+			//_alloc(list.size(), list.size() > capacity ? list.size() : capacity);
+
+			_raw_memory = _allocc(sizeof(Type) * (list.size() > capacity ? list.size() : capacity));
+			_first = static_cast<Type*>(new(_raw_memory) Type[list.size()]);
+			_last = _first + list.size();
+			_capacity_last = _first + (list.size() > capacity ? list.size() : capacity);
 		}
 
-		_copy_data(_first, list.begin(), size());
+		_copy_data(_first, list.begin(), list.size());
 
 		return *this;
 	}
@@ -392,7 +462,7 @@ namespace My
 	template<typename Type>
 	void* Vector<Type>::_allocc(std::size_t bytes)
 	{
-		return operator new(bytes);
+		return ::operator new[](bytes);
 	}
 
 	template<typename Type>
