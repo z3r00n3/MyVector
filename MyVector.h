@@ -41,9 +41,8 @@ namespace My
 		void push_back(const Type& value);
 		void pop_back();
 		void clear();
-		void resize(std::size_t new_size);
-		void resize(std::size_t new_size, const Type& value);
 		void swap(Vector<Type>& other);
+		//void resize(std::size_t new_size, const Type& value = Type());
 	
 	private:
 		void* _raw_memory;
@@ -59,7 +58,6 @@ namespace My
 		void  _bind_storage_pointers(Type* storage, std::size_t size, std::size_t capacity);
 		void  _prepare_data_storage(std::size_t size, std::size_t capacity);
 		void  _copy_data(Type* destination, const Type* source, std::size_t size);
-		void  _resize(std::size_t new_size);
 		void  _fill_range_by_value(Type* first, Type* last, Type value);
 		std::size_t _calculate_new_capacity(std::size_t size) const;
 	};
@@ -136,7 +134,7 @@ namespace My
 			{
 				(_first + i)->~Type();
 			}
-			::operator delete[](_raw_memory, _first);
+			::operator delete(_first, _raw_memory);
 		}
 	}
 
@@ -172,7 +170,7 @@ namespace My
 					{
 						(_first + i)->~Type();
 					}
-					::operator delete[](_raw_memory, _first);
+					::operator delete(_first, _raw_memory);
 				}
 
 				_prepare_data_storage(other.size(), capacity);
@@ -201,7 +199,7 @@ namespace My
 				{
 					(_first + i)->~Type();
 				}
-				::operator delete[](_raw_memory, _first);
+				::operator delete(_first, _raw_memory);
 			}
 
 			_prepare_data_storage(list.size(), capacity);
@@ -317,7 +315,10 @@ namespace My
 	{
 		if (new_capacity > capacity())
 		{
-			_realloc(sizeof(Type) * new_capacity);
+			std::size_t size = this->size();
+
+			_raw_memory = _realloc(sizeof(Type) * new_capacity);
+			_bind_storage_pointers(static_cast<Type*>(_raw_memory), size, new_capacity);
 		}
 	}
 
@@ -357,21 +358,6 @@ namespace My
 	{
 		_last = _first;
 	}
-
-	template<typename Type>
-	void Vector<Type>::resize(std::size_t new_size)
-	{
-		_resize(new_size);
-	}
-
-	template<typename Type>
-	void Vector<Type>::resize(std::size_t new_size, const Type& value)
-	{
-		std::size_t size = this->size();
-
-		_resize(new_size);
-		_fill_range_by_value(_first + size; _first + new_size, value);
-	}
 	
 	template<typename Type>
 	void Vector<Type>::swap(Vector<Type>& other)
@@ -389,6 +375,23 @@ namespace My
 		other._capacity_last = tmp_capacity_last;
 	}
 
+	//template<typename Type>
+	//void Vector<Type>::resize(std::size_t new_size, const Type& value = Type())
+	//{
+	//	if (new_size == size())
+	//	{
+	//		return;
+	//	}
+	//	if (new_size > capacity())
+	//	{
+	//		//_realloc(sizeof(Type) * new_size);
+	//		_raw_memory = _realloc(sizeof(Type) * new_size);
+
+	//	}
+
+	//	_last = _first + new_size;
+	//}
+
 	///////////////////////////////////////////////////////////////////////////////
 	//                        PRIVATE MEMBER FUNCTIONS                           //
 	///////////////////////////////////////////////////////////////////////////////
@@ -396,7 +399,7 @@ namespace My
 	template<typename Type>
 	void* Vector<Type>::_alloc(std::size_t size_bytes)
 	{
-		return ::operator new[](size_bytes);
+		return ::operator new(size_bytes);
 	}
 
 	template<typename Type>
@@ -414,11 +417,11 @@ namespace My
 			{
 				(_first + i)->~Type();
 			}
-			::operator delete[](_raw_memory, _first);
+			::operator delete(_first, _raw_memory);
 		}
 
-		_raw_memory = new_memory;
-		_bind_storage_pointers(new_storage, size, new_size_bytes / sizeof(Type)); // !!!
+		//_raw_memory = new_memory; // !!! вынести из метода
+		//_bind_storage_pointers(new_storage, size, new_size_bytes / sizeof(Type)); // !!! вынести из метода
 
 		return new_memory;
 	}
@@ -454,22 +457,6 @@ namespace My
 		{
 			*(destination + i) = *(source + i);
 		}
-	}
-
-	template<typename Type>
-	void Vector<Type>::_resize(std::size_t new_size)
-	{
-		if (new_size == size())
-		{
-			return;
-		}
-		if (new_size > capacity())
-		{
-			_realloc(sizeof(Type) * new_size);
-			std::cout << "i'm here" << std::endl;
-		}
-
-		_last = _first + new_size;
 	}
 
 	template<typename Type>

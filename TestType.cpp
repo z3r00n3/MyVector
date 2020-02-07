@@ -44,6 +44,10 @@ TestType::~TestType()
 
 	if (_str)
 	{
+#ifdef _DEBUG
+		std::cout << "TestType destruction process..." << std::endl;
+#endif // _DEBUG
+
 		delete[] _str;
 	}
 }
