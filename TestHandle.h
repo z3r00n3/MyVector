@@ -17,7 +17,7 @@ void PrintMyVectorInfo(const My::Vector<Type>& vec)
 {
 	std::cout << std::boolalpha;
 
-	std::cout << "Data stored in vector: ";
+	std::cout << "Data stored in My::Vector: ";
 
 	for (std::size_t i = 0; i < vec.size(); i++)
 	{
@@ -30,7 +30,8 @@ void PrintMyVectorInfo(const My::Vector<Type>& vec)
 	std::cout << "Size is: " << vec.size() << std::endl;
 	std::cout << "Capacity is: " << vec.capacity() << std::endl;
 
-	std::cout << std::endl;
+	//std::cout << std::endl;
+	PrintDividingLine();
 }
 
 template<typename Type>
@@ -51,5 +52,6 @@ void PrintStdVectorInfo(const std::vector<Type>& vec)
 	std::cout << "Size is: " << vec.size() << std::endl;
 	std::cout << "Capacity is: " << vec.capacity() << std::endl;
 
-	std::cout << std::endl;
+	//std::cout << std::endl;
+	PrintDividingLine();
 }
