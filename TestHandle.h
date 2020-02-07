@@ -16,6 +16,8 @@ template<typename Type>
 void PrintMyVectorInfo(const My::Vector<Type>& vec)
 {
 	std::cout << std::boolalpha;
+	
+	PrintDividingLine();
 
 	std::cout << "Data stored in My::Vector: ";
 
@@ -38,6 +40,8 @@ template<typename Type>
 void PrintStdVectorInfo(const std::vector<Type>& vec)
 {
 	std::cout << std::boolalpha;
+
+	PrintDividingLine();
 
 	std::cout << "Data stored in vector: ";
 

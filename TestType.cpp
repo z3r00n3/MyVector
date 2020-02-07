@@ -18,8 +18,15 @@ TestType::TestType(int i, char* s)
 
 	_int = i;
 
-	_str = new char[std::strlen(s) + 1];
-	std::strcpy(_str, s);
+	if (s)
+	{
+		_str = new char[std::strlen(s) + 1];
+		std::strcpy(_str, s);
+	}
+	else
+	{
+		_str = nullptr;
+	}
 }
 
 TestType::TestType(const TestType& other)
@@ -31,8 +38,15 @@ TestType::TestType(const TestType& other)
 	if (this != &other)
 	{
 		_int = other._int;
-		_str = new char[std::strlen(other._str) + 1];
-		std::strcpy(_str, other._str);
+		if (other._str)
+		{
+			_str = new char[std::strlen(other._str) + 1];
+			std::strcpy(_str, other._str);
+		}
+		else
+		{
+			_str = nullptr;
+		}
 	}
 }
 
@@ -45,7 +59,7 @@ TestType::~TestType()
 	if (_str)
 	{
 #ifdef _DEBUG
-		std::cout << "TestType destruction process..." << std::endl;
+		std::cout << "TestType (_str) destruction process..." << std::endl;
 #endif // _DEBUG
 
 		delete[] _str;
