@@ -7,7 +7,7 @@ namespace My
 	{
 	public:
 		// Constructors and Destructor
-		Vector() { std::cout << "default constructor" << std::endl; };
+		Vector();
 		Vector(std::size_t size);
 		Vector(std::size_t size, Type default_value);
 		Vector(std::initializer_list<Type> list);
@@ -16,6 +16,7 @@ namespace My
 
 		// Member functions
 		Vector<Type>& operator=(const Vector<Type>& other);
+		Vector<Type>& operator=(std::initializer_list<Type> list);
 
 		// Element access
 		      Type& at(std::size_t pos);
@@ -63,16 +64,31 @@ namespace My
 	///////////////////////////////////////////////////////////////////////////////
 
 	template<typename Type>
+	Vector<Type>::Vector()
+		: _first(nullptr), _last(nullptr), _capacity_last(nullptr)
+	{
+#ifdef _DEBUG
+		std::cout << "default constructor" << std::endl;
+#endif // _DEBUG
+	}
+
+	template<typename Type>
 	Vector<Type>::Vector(std::size_t size)
 	{
+#ifdef _DEBUG
 		std::cout << "(size) constructor" << std::endl;
+#endif // _DEBUG
+
 		_alloc(size, size);
 	}
 
 	template<typename Type>
 	Vector<Type>::Vector(std::size_t size, Type default_value)
 	{
+#ifdef _DEBUG
 		std::cout << "(size, value) constructor" << std::endl;
+#endif // _DEBUG
+
 		_alloc(size, size);
 		std::fill(_first, _last, default_value);
 	}
@@ -80,7 +96,10 @@ namespace My
 	template<typename Type>
 	Vector<Type>::Vector(std::initializer_list<Type> list)
 	{
+#ifdef _DEBUG
 		std::cout << "(initialiser_list) constructor" << std::endl;
+#endif // _DEBUG
+
 		_alloc(list.size(), list.size());
 		_copy_data(_first, list.begin(), size());
 	}
@@ -88,7 +107,10 @@ namespace My
 	template<typename Type>
 	Vector<Type>::Vector(const Vector<Type>& other)
 	{
+#ifdef _DEBUG
 		std::cout << "copy constructor" << std::endl;
+#endif // _DEBUG
+
 		if (this != &other)
 		{
 			_alloc(other.size(), other.capacity());
@@ -99,7 +121,10 @@ namespace My
 	template<typename Type>
 	Vector<Type>::~Vector()
 	{
+#ifdef _DEBUG
 		std::cout << "destructor" << std::endl;
+#endif // _DEBUG
+
 		if (_first)
 		{
 			delete[] _first;
@@ -113,7 +138,10 @@ namespace My
 	template<typename Type>
 	Vector<Type>& Vector<Type>::operator=(const Vector<Type>& other)
 	{
-		std::cout << "operator=" << std::endl;
+#ifdef _DEBUG
+		std::cout << "operator=(& other)" << std::endl;
+#endif // _DEBUG
+
 		std::size_t capacity = 0;
 
 		if (this != &other)
@@ -139,6 +167,30 @@ namespace My
 
 			_copy_data(_first, other.data(), size());
 		}
+
+		return *this;
+	}
+
+	template<typename Type>
+	Vector<Type>& Vector<Type>::operator=(std::initializer_list<Type> list)
+	{
+#ifdef _DEBUG
+		std::cout << "operator=(initializer_list)" << std::endl;
+#endif // _DEBUG
+
+		std::size_t capacity = this->capacity();
+
+		if (size() != list.size())
+		{
+			if (_first)
+			{
+				delete[] _first;
+			}
+
+			_alloc(list.size(), list.size() > capacity ? list.size() : capacity);
+		}
+
+		_copy_data(_first, list.begin(), size());
 
 		return *this;
 	}
