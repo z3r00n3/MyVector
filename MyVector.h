@@ -44,18 +44,21 @@ namespace My
 		void resize(std::size_t new_size);
 		void resize(std::size_t new_size, const Type& value);
 		void swap(Vector<Type>& other);
-
+	
 	private:
 		Type* _first;
 		Type* _last;
 		Type* _capacity_last;
 		const float _capacity_multiplier = 1.5;
-
+		
 		// Member functions
 		Type* _alloc(std::size_t size, std::size_t capacity);
+		void* _allocc(std::size_t bytes);
 		Type* _realloc(std::size_t size, std::size_t new_capacity);
-		void _copy_data(Type* destination, const Type* source, std::size_t size);
-		void _resize(std::size_t new_size);
+		Type* _reallocc(Type* mem_block, std::size_t bytes);
+		void  _set_last_and_capacity(std::size_t size, std::size_t capacity);
+		void  _copy_data(Type* destination, const Type* source, std::size_t size);
+		void  _resize(std::size_t new_size);
 		std::size_t _calculate_new_capacity(std::size_t size) const;
 	};
 
@@ -68,7 +71,7 @@ namespace My
 		: _first(nullptr), _last(nullptr), _capacity_last(nullptr)
 	{
 #ifdef _DEBUG
-		std::cout << "default constructor" << std::endl;
+		std::cout << "MyVector default constructor" << std::endl;
 #endif // _DEBUG
 	}
 
@@ -76,7 +79,7 @@ namespace My
 	Vector<Type>::Vector(std::size_t size)
 	{
 #ifdef _DEBUG
-		std::cout << "(size) constructor" << std::endl;
+		std::cout << "MyVector (size) constructor" << std::endl;
 #endif // _DEBUG
 
 		_alloc(size, size);
@@ -86,7 +89,7 @@ namespace My
 	Vector<Type>::Vector(std::size_t size, Type default_value)
 	{
 #ifdef _DEBUG
-		std::cout << "(size, value) constructor" << std::endl;
+		std::cout << "MyVector (size, value) constructor" << std::endl;
 #endif // _DEBUG
 
 		_alloc(size, size);
@@ -97,7 +100,7 @@ namespace My
 	Vector<Type>::Vector(std::initializer_list<Type> list)
 	{
 #ifdef _DEBUG
-		std::cout << "(initialiser_list) constructor" << std::endl;
+		std::cout << "MyVector (initialiser_list) constructor" << std::endl;
 #endif // _DEBUG
 
 		_alloc(list.size(), list.size());
@@ -108,7 +111,7 @@ namespace My
 	Vector<Type>::Vector(const Vector<Type>& other)
 	{
 #ifdef _DEBUG
-		std::cout << "copy constructor" << std::endl;
+		std::cout << "MyVector copy constructor" << std::endl;
 #endif // _DEBUG
 
 		if (this != &other)
@@ -122,7 +125,7 @@ namespace My
 	Vector<Type>::~Vector()
 	{
 #ifdef _DEBUG
-		std::cout << "destructor" << std::endl;
+		std::cout << "MyVector destructor" << std::endl;
 #endif // _DEBUG
 
 		if (_first)
@@ -139,7 +142,7 @@ namespace My
 	Vector<Type>& Vector<Type>::operator=(const Vector<Type>& other)
 	{
 #ifdef _DEBUG
-		std::cout << "operator=(& other)" << std::endl;
+		std::cout << "MyVector operator=(& other)" << std::endl;
 #endif // _DEBUG
 
 		std::size_t capacity = 0;
@@ -175,7 +178,7 @@ namespace My
 	Vector<Type>& Vector<Type>::operator=(std::initializer_list<Type> list)
 	{
 #ifdef _DEBUG
-		std::cout << "operator=(initializer_list)" << std::endl;
+		std::cout << "MyVector operator=(initializer_list)" << std::endl;
 #endif // _DEBUG
 
 		std::size_t capacity = this->capacity();
@@ -355,7 +358,7 @@ namespace My
 		_resize(new_size);
 		std::fill(_first + size, _first + new_size, value);
 	}
-
+	
 	template<typename Type>
 	void Vector<Type>::swap(Vector<Type>& other)
 	{
@@ -363,12 +366,12 @@ namespace My
 		Type* tmp_last          = _last;
 		Type* tmp_capacity_last = _capacity_last;
 		
-		_first         = other.data();
-		_last          = _first + other.size();
+		_first    = other.data();
+		_last     = _first + other.size();
 		_capacity_last = _first + other.capacity();
 		
-		other._first         = tmp_first;
-		other._last          = tmp_last;
+		other._first    = tmp_first;
+		other._last     = tmp_last;
 		other._capacity_last = tmp_capacity_last;
 	}
 
@@ -379,11 +382,17 @@ namespace My
 	template<typename Type>
 	Type* Vector<Type>::_alloc(std::size_t size, std::size_t capacity)
 	{
-		_first         = new Type[capacity]();
-		_last          = _first + size;
+		_first    = new Type[capacity]();
+		_last     = _first + size;
 		_capacity_last = _first + capacity;
 
 		return _first;
+	}
+
+	template<typename Type>
+	void* Vector<Type>::_allocc(std::size_t bytes)
+	{
+		return operator new(bytes);
 	}
 
 	template<typename Type>
@@ -397,11 +406,26 @@ namespace My
 			delete[] _first;
 		}
 
-		_first         = new_memory;
-		_last          = _first + size;
+		_first    = new_memory;
+		_last     = _first + size;
 		_capacity_last = _first + new_capacity;
 
 		return new_memory;
+	}
+
+	template<typename Type>
+	Type* Vector<Type>::_reallocc(Type* mem_block, std::size_t bytes)
+	{
+
+
+		return NULL;
+	}
+
+	template<typename Type>
+	void Vector<Type>::_set_last_and_capacity(std::size_t size, std::size_t capacity)
+	{
+		_last          = _first + size;
+		_capacity_last = _first + capacity;
 	}
 
 	template<typename Type>
