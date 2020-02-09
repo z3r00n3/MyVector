@@ -4,7 +4,7 @@ class TestType
 {
 public:
 	TestType();
-	TestType(int i, char* s);
+	TestType(int i, const char* s);
 	TestType(const TestType& other);
 	~TestType();
 

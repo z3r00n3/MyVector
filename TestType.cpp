@@ -10,7 +10,7 @@ TestType::TestType()
 #endif // _DEBUG
 }
 
-TestType::TestType(int i, char* s)
+TestType::TestType(int i, const char* s)
 {
 #ifdef _DEBUG
 	std::cout << "TestType (int, char*) constructor" << std::endl;

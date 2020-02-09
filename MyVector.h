@@ -42,22 +42,17 @@ namespace My
 		void pop_back();
 		void clear();
 		//void resize(std::size_t count);
-		//void resize(std::size_t count, const Type& value);
+		void resize(std::size_t count);
+		void resize(std::size_t count, const Type& value);
 		void swap(Vector<Type>& other);
 	
 	private:
 		Type* _first;
 		Type* _last;
 		Type* _capacity_last;
-		const float _capacity_multiplier = 1.5;
+		const float _capacity_multiplier = 1.5f;
 		
 		// Member functions
-		//Type* _realloc(Type* memory_block, std::size_t new_size_bytes);
-		//Type* _placement(Type* place_memory_ptr, std::size_t count, const Type value = Type());
-		//Type* _destruct_elements(Type* place, std::size_t count);
-		//void  _copy_elements(Type* destination_memory_ptr, const Type* source_memory_ptr, std::size_t count);
-		//void  _fill_range_by_value(Type* first, Type* last, Type value);
-		//std::size_t _calculate_new_capacity(std::size_t size) const;
 	};
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -174,7 +169,7 @@ namespace My
 				(_first + i)->~Type();
 			}
 
-			operator delete(_first);
+			operator delete(static_cast<void*>(_first));
 		}
 	}
 
@@ -211,7 +206,7 @@ namespace My
 						(_first + i)->~Type();
 					}
 
-					operator delete(_first);
+					operator delete(static_cast<void*>(_first));
 				}
 
 				_first = static_cast<Type*>(operator new(sizeof(Type) * capacity));
@@ -261,7 +256,7 @@ namespace My
 					(_first + i)->~Type();
 				}
 
-				operator delete(_first);
+				operator delete(static_cast<void*>(_first));
 			}
 
 			_first = static_cast<Type*>(operator new(sizeof(Type) * capacity));
@@ -411,7 +406,7 @@ namespace My
 						(_first + i)->~Type();
 					}
 
-					operator delete(_first);
+					operator delete(static_cast<void*>(_first));
 
 				}
 
@@ -441,7 +436,7 @@ namespace My
 						(_first + i)->~Type();
 					}
 
-					operator delete(_first);
+					operator delete(static_cast<void*>(_first));
 				}
 
 				_first         = new_memory_ptr;
@@ -458,37 +453,158 @@ namespace My
 	template<typename Type>
 	void Vector<Type>::push_back(const Type& value)
 	{
-		//std::size_t size = this->size();
-
-		//if (capacity() - size == 0)
-		//{
-		//	_first = _realloc(_first, sizeof(Type) * _calculate_new_capacity(size));
-		//	_last = _first + size;
-		//	_capacity_last = _first + _calculate_new_capacity(size);
-		//}
-
-		//new(_last) Type(value);
-		//_last++;
-
 		if (capacity() - size() == 0)
 		{
-			std::size_t new_capacity = size() > 1 ? static_cast<std::size_t>(size() * _capacity_multiplier) : ++(size());
-		
+			std::size_t size = this->size();
+			std::size_t new_capacity = size > 1 ? static_cast<std::size_t>(size * _capacity_multiplier) : size + 1;
+			Type* new_memory_ptr = static_cast<Type*>(operator new(sizeof(Type) * new_capacity));
+			if (new_memory_ptr)
+			{
+				if (_first)
+				{
+					for (std::size_t i = 0; i < size; i++)
+					{
+						new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
+
+						(_first + i)->~Type();
+					}
+
+					operator delete(static_cast<void*>(_first));
+				}
+
+				_first         = new_memory_ptr;
+				_last          = _first + size;
+				_capacity_last = _first + new_capacity;
+
+				new(static_cast<void*>(_last)) Type(value);
+				_last++;
+			}
 		}
 	}
 
 	template<typename Type>
 	inline void Vector<Type>::pop_back()
 	{
-		_last--;
+		if (_first)
+		{
+			(_first + (size() - 1))->~Type();
+			_last--;
+		}
 	}
 
 	template<typename Type>
 	inline void Vector<Type>::clear()
 	{
-		_last = _first;
+		if (_first)
+		{
+			for (std::size_t i = 0; i < size(); i++)
+			{
+				(_first + i)->~Type();
+			}
+			_last = _first;
+		}
+	}
+
+	template<typename Type>
+	void Vector<Type>::resize(std::size_t count)
+	{
+		std::size_t size = this->size();
+
+		if (count > size)
+		{
+			if (count > capacity())
+			{
+				Type* new_memory_ptr = static_cast<Type*>(operator new(sizeof(Type) * count));
+			
+				if (new_memory_ptr)
+				{
+					if (_first)
+					{
+						for (std::size_t i = 0; i < size; i++)
+						{
+							new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
+
+							(_first + i)->~Type();
+						}
+
+						operator delete(static_cast<void*>(_first));
+						
+					}
+
+					_first = new_memory_ptr;
+				}
+			}
+
+			for (std::size_t i = size; i < count; i++)
+			{
+				new(static_cast<void*>(_first + i)) Type();
+			}
+
+			_last = _first + count;
+			_capacity_last = _first + count;
+		}
+
+		if (count < size)
+		{
+			for (std::size_t i = count; i < size; i++)
+			{
+				(_first + i)->~Type();
+			}
+
+			_last = _first + count;
+		}
 	}
 	
+	template<typename Type>
+	void Vector<Type>::resize(std::size_t count, const Type& value)
+	{
+		std::size_t size = this->size();
+
+		if (count > size)
+		{
+			if (count > capacity())
+			{
+				Type* new_memory_ptr = static_cast<Type*>(operator new(sizeof(Type) * count));
+
+				if (new_memory_ptr)
+				{
+					if (_first)
+					{
+						for (std::size_t i = 0; i < size; i++)
+						{
+							new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
+
+							(_first + i)->~Type();
+						}
+
+						operator delete(static_cast<void*>(_first));
+
+					}
+
+					_first = new_memory_ptr;
+				}
+			}
+
+			for (std::size_t i = size; i < count; i++)
+			{
+				new(static_cast<void*>(_first + i)) Type(value);
+			}
+
+			_last = _first + count;
+			_capacity_last = _first + count;
+		}
+
+		if (count < size)
+		{
+			for (std::size_t i = count; i < size; i++)
+			{
+				(_first + i)->~Type();
+			}
+
+			_last = _first + count;
+		}
+	}
+
 	template<typename Type>
 	void Vector<Type>::swap(Vector<Type>& other)
 	{
@@ -509,86 +625,5 @@ namespace My
 	//                        PRIVATE MEMBER FUNCTIONS                           //
 	///////////////////////////////////////////////////////////////////////////////
 
-	//template<typename Type>
-	//Type* Vector<Type>::_realloc(Type* source_ptr, std::size_t new_size_bytes)
-	//{
-	//	Type* new_memory_ptr = static_cast<Type*>(_alloc(new_size_bytes));
-	//	_placement(new_memory_ptr, size());
-
-	//	_copy_data(new_memory_ptr, source_ptr, size());
-
-	//	_destruct_elements(memory_block, size());
-	//	_dealloc(memory_block);
-
-	//	return new_memory_ptr;
-	//}
-
-//	template<typename Type>
-//	Type* Vector<Type>::_placement(Type* place_memory_ptr, std::size_t count, const Type value = Type())
-//	{
-//#ifdef _DEBUG
-//		std::cout << "My::Vector placement()" << std::endl;
-//#endif // _DEBUG
-//
-//		if (place_memory_ptr)
-//		{
-//			for (std::size_t i = 0; i < count; i++)
-//			{
-//#ifdef _DEBUG
-//				std::cout << "...My::Vector placement process; value is " << value << "..." << std::endl;
-//#endif // _DEBUG
-//
-//				new(static_cast<void*>(place_memory_ptr + i)) Type(value);
-//			}
-//		}
-//
-//		return place_memory_ptr;
-//	}
-
-//	template<typename Type>
-//	Type* Vector<Type>::_destruct_elements(Type* place, std::size_t count)
-//	{
-//		if (place)
-//		{
-//			for (std::size_t i = 0; i < count; i++)
-//			{
-//#ifdef _DEBUG
-//				std::cout << "Type destructor call" << std::endl;
-//#endif // _DEBUG
-//				(place + i)->~Type();
-//			}
-//		}
-//
-//		return place;
-//	}
-
-	//template<typename Type>
-	//void Vector<Type>::_copy_elements(Type* destination_memory_ptr, const Type* source_memory_ptr, std::size_t count)
-	//{
-	//	if (destination_memory_ptr && source_memory_ptr)
-	//	{
-	//		for (std::size_t i = 0; i < count; i++)
-	//		{
-	//			*(destination_memory_ptr + i) = *(source_memory_ptr + i);
-	//		}
-	//	}
-	//}
-
-	//template<typename Type>
-	//void Vector<Type>::_fill_range_by_value(Type* first, Type* last, Type value)
-	//{
-	//	if (first && last && last - first > 0)
-	//	{
-	//		for (std::size_t i = 0; i < static_cast<std::size_t>(last - first); i++)
-	//		{
-	//			*(first + i) = value;
-	//		}
-	//	}
-	//}
-
-	//template<typename Type>
-	//inline std::size_t Vector<Type>::_calculate_new_capacity(std::size_t size) const
-	//{
-	//	return size > 1 ? static_cast<std::size_t>(size * _capacity_multiplier) : ++size;
-	//}
+	
 }
