@@ -41,7 +41,6 @@ namespace My
 		void push_back(const Type& value);
 		void pop_back();
 		void clear();
-		//void resize(std::size_t count);
 		void resize(std::size_t count);
 		void resize(std::size_t count, const Type& value);
 		void swap(Vector<Type>& other);
@@ -65,6 +64,7 @@ namespace My
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector default constructor" << std::endl;
+
 #endif // _DEBUG
 	}
 
@@ -453,16 +453,17 @@ namespace My
 	template<typename Type>
 	void Vector<Type>::push_back(const Type& value)
 	{
-		if (capacity() - size() == 0)
+		if ((capacity() - size()) == 0)
 		{
-			std::size_t size = this->size();
-			std::size_t new_capacity = size > 1 ? static_cast<std::size_t>(size * _capacity_multiplier) : size + 1;
+			std::size_t old_size = size();
+			std::size_t new_capacity = old_size > 1 ? static_cast<std::size_t>(old_size * _capacity_multiplier) : old_size + 1; //!!!
 			Type* new_memory_ptr = static_cast<Type*>(operator new(sizeof(Type) * new_capacity));
+			
 			if (new_memory_ptr)
 			{
 				if (_first)
 				{
-					for (std::size_t i = 0; i < size; i++)
+					for (std::size_t i = 0; i < old_size; i++)
 					{
 						new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
 
@@ -473,13 +474,13 @@ namespace My
 				}
 
 				_first         = new_memory_ptr;
-				_last          = _first + size;
+				_last          = _first + old_size;
 				_capacity_last = _first + new_capacity;
-
-				new(static_cast<void*>(_last)) Type(value);
-				_last++;
 			}
 		}
+		
+		new(static_cast<void*>(_last)) Type(value);
+		_last++;
 	}
 
 	template<typename Type>
@@ -508,9 +509,9 @@ namespace My
 	template<typename Type>
 	void Vector<Type>::resize(std::size_t count)
 	{
-		std::size_t size = this->size();
+		std::size_t old_size = size();
 
-		if (count > size)
+		if (count > old_size)
 		{
 			if (count > capacity())
 			{
@@ -520,7 +521,7 @@ namespace My
 				{
 					if (_first)
 					{
-						for (std::size_t i = 0; i < size; i++)
+						for (std::size_t i = 0; i < old_size; i++)
 						{
 							new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
 
@@ -535,7 +536,7 @@ namespace My
 				}
 			}
 
-			for (std::size_t i = size; i < count; i++)
+			for (std::size_t i = old_size; i < count; i++)
 			{
 				new(static_cast<void*>(_first + i)) Type();
 			}
@@ -544,9 +545,9 @@ namespace My
 			_capacity_last = _first + count;
 		}
 
-		if (count < size)
+		if (count < old_size)
 		{
-			for (std::size_t i = count; i < size; i++)
+			for (std::size_t i = count; i < old_size; i++)
 			{
 				(_first + i)->~Type();
 			}
@@ -558,9 +559,9 @@ namespace My
 	template<typename Type>
 	void Vector<Type>::resize(std::size_t count, const Type& value)
 	{
-		std::size_t size = this->size();
+		std::size_t old_size = size();
 
-		if (count > size)
+		if (count > old_size)
 		{
 			if (count > capacity())
 			{
@@ -570,7 +571,7 @@ namespace My
 				{
 					if (_first)
 					{
-						for (std::size_t i = 0; i < size; i++)
+						for (std::size_t i = 0; i < old_size; i++)
 						{
 							new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
 
@@ -585,7 +586,7 @@ namespace My
 				}
 			}
 
-			for (std::size_t i = size; i < count; i++)
+			for (std::size_t i = old_size; i < count; i++)
 			{
 				new(static_cast<void*>(_first + i)) Type(value);
 			}
@@ -594,9 +595,9 @@ namespace My
 			_capacity_last = _first + count;
 		}
 
-		if (count < size)
+		if (count < old_size)
 		{
-			for (std::size_t i = count; i < size; i++)
+			for (std::size_t i = count; i < old_size; i++)
 			{
 				(_first + i)->~Type();
 			}
@@ -612,9 +613,9 @@ namespace My
 		Type* tmp_last          = _last;
 		Type* tmp_capacity_last = _capacity_last;
 		
-		_first         = other.data();
-		_last          = _first + other.size();
-		_capacity_last = _first + other.capacity();
+		_first         = other._first;
+		_last          = other._last;
+		_capacity_last = other._capacity_last;
 		
 		other._first         = tmp_first;
 		other._last          = tmp_last;
