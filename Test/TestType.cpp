@@ -1,12 +1,15 @@
 #include <iostream>
 
 #include "TestType.h"
+#include "TestHandle.h"
 
 TestType::TestType()
 	: _int(0), _str(nullptr)
 {
 #ifdef _DEBUG
 	std::cout << "TestType default constructor" << std::endl;
+	std::cout << "this: 0x" << this << std::endl;
+	PrintDividingLine();
 #endif // _DEBUG
 }
 
@@ -14,6 +17,8 @@ TestType::TestType(int i, const char* s)
 {
 #ifdef _DEBUG
 	std::cout << "TestType (int, char*) constructor" << std::endl;
+	std::cout << "this: 0x" << this << std::endl;
+	PrintDividingLine();
 #endif // _DEBUG
 
 	_int = i;
@@ -33,6 +38,8 @@ TestType::TestType(const TestType& other)
 {
 #ifdef _DEBUG
 	std::cout << "TestType copy constructor" << std::endl;
+	std::cout << "this: 0x" << this << "\tother: 0x" << std::addressof(other) << std::endl;
+	PrintDividingLine();
 #endif // _DEBUG
 
 	if (this != &other)
@@ -54,6 +61,7 @@ TestType::~TestType()
 {
 #ifdef _DEBUG
 	std::cout << "TestType destructor" << std::endl;
+	std::cout << "this: 0x" << this << std::endl;
 #endif // _DEBUG
 
 	if (_str)
@@ -64,12 +72,18 @@ TestType::~TestType()
 
 		delete[] _str;
 	}
+
+#ifdef _DEBUG
+	PrintDividingLine();
+#endif // _DEBUG
 }
 
 TestType& TestType::operator=(const TestType& other)
 {
 #ifdef _DEBUG
 	std::cout << "TestType operator=(& other)" << std::endl;
+	std::cout << "this: 0x" << this << "\tother: 0x" << std::addressof(other) << std::endl;
+	PrintDividingLine();
 #endif // _DEBUG
 
 	if (this != &other)

@@ -2,8 +2,8 @@
 #include <vector>
 
 #include "MyVector.h"
-#include "TestType.h"
-#include "TestHandle.h"
+#include "../Test/TestType.h"
+#include "../Test/TestHandle.h"
 
 int main()
 {

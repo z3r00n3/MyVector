@@ -9,7 +9,7 @@ namespace My
 		// Constructors and Destructor
 		Vector();
 		Vector(std::size_t size);
-		Vector(std::size_t size, Type value);
+		Vector(std::size_t size, const Type& value);
 		Vector(std::initializer_list<Type> list);
 		Vector(const Vector<Type>& other);
 		~Vector();
@@ -46,9 +46,9 @@ namespace My
 		void swap(Vector<Type>& other);
 	
 	private:
-		Type* _first;
-		Type* _last;
-		Type* _capacity_last;
+		Type*       _first;
+		Type*       _last;
+		Type*       _capacity_last;
 		const float _capacity_multiplier = 1.5f;
 		
 		// Member functions
@@ -64,7 +64,8 @@ namespace My
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector default constructor" << std::endl;
-
+		std::cout << "this: 0x" << this << std::endl;
+		PrintDividingLine();
 #endif // _DEBUG
 	}
 
@@ -73,6 +74,8 @@ namespace My
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector (size) constructor" << std::endl;
+		std::cout << "this: 0x" << this << std::endl;
+		PrintDividingLine();
 #endif // _DEBUG
 
 		_first = static_cast<Type*>(operator new(sizeof(Type) * size));
@@ -90,10 +93,12 @@ namespace My
 	}
 
 	template<typename Type>
-	Vector<Type>::Vector(std::size_t size, Type value)
+	Vector<Type>::Vector(std::size_t size, const Type& value)
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector (size, value) constructor" << std::endl;
+		std::cout << "this: 0x" << this << std::endl;
+		PrintDividingLine();
 #endif // _DEBUG
 
 		_first = static_cast<Type*>(operator new(sizeof(Type) * size));
@@ -115,6 +120,8 @@ namespace My
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector (initialiser_list) constructor" << std::endl;
+		std::cout << "this: 0x" << this << "\tlist: 0x" << &list << std::endl;
+		PrintDividingLine();
 #endif // _DEBUG
 
 		_first = static_cast<Type*>(operator new(sizeof(Type) * list.size()));
@@ -136,6 +143,8 @@ namespace My
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector copy constructor" << std::endl;
+		std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
+		PrintDividingLine();
 #endif // _DEBUG
 
 		if (this != &other)
@@ -160,6 +169,8 @@ namespace My
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector destructor" << std::endl;
+		std::cout << "this: 0x" << this << std::endl;
+		PrintDividingLine();
 #endif // _DEBUG
 
 		if (_first)
@@ -182,21 +193,23 @@ namespace My
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector operator=(& other)" << std::endl;
+		std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
+		PrintDividingLine();
 #endif // _DEBUG
 
 		if (this != &other)
 		{
 			if (size() != other.size())
 			{
-				std::size_t capacity = 0;
+				std::size_t new_capacity = 0;
 
-				if (size() < other.size() && this->capacity() < other.capacity())
+				if (size() < other.size() && capacity() < other.capacity())
 				{
-					capacity = other.size();
+					new_capacity = other.size();
 				}
 				else
 				{
-					capacity = this->capacity();
+					new_capacity = capacity();
 				}
 
 				if (_first)
@@ -209,7 +222,7 @@ namespace My
 					operator delete(static_cast<void*>(_first));
 				}
 
-				_first = static_cast<Type*>(operator new(sizeof(Type) * capacity));
+				_first = static_cast<Type*>(operator new(sizeof(Type) * new_capacity));
 				
 				if (_first)
 				{
@@ -219,7 +232,7 @@ namespace My
 					}
 				
 					_last          = _first + other.size();
-					_capacity_last = _first + capacity;
+					_capacity_last = _first + new_capacity;
 				}
 
 			}
@@ -243,11 +256,22 @@ namespace My
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector operator=(initializer_list)" << std::endl;
+		std::cout << "this: 0x" << this << "\tlist: 0x" << &list << std::endl;
+		PrintDividingLine();
 #endif // _DEBUG
 
 		if (size() != list.size())
 		{
-			std::size_t capacity = list.size() > this->capacity() ? list.size() : this->capacity();
+			std::size_t new_capacity = 0;
+			
+			if (list.size() > capacity())
+			{
+				new_capacity = list.size();
+			}
+			else
+			{
+				new_capacity = capacity();
+			}
 
 			if (_first)
 			{
@@ -259,7 +283,7 @@ namespace My
 				operator delete(static_cast<void*>(_first));
 			}
 
-			_first = static_cast<Type*>(operator new(sizeof(Type) * capacity));
+			_first = static_cast<Type*>(operator new(sizeof(Type) * new_capacity));
 
 			if (_first)
 			{
@@ -269,7 +293,7 @@ namespace My
 				}
 
 				_last          = _first + list.size();
-				_capacity_last = _first + capacity;
+				_capacity_last = _first + new_capacity;
 			}
 		}
 		else
@@ -371,7 +395,14 @@ namespace My
 	template<typename Type>
 	inline bool Vector<Type>::empty() const
 	{
-		return _first == _last ? true : false;
+		if (_first == _last)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	template<typename Type>
@@ -395,11 +426,11 @@ namespace My
 
 			if (new_memory_ptr)
 			{
-				std::size_t size = this->size();
+				std::size_t current_size = size();
 				
 				if (_first)
 				{
-					for (std::size_t i = 0; i < size; i++)
+					for (std::size_t i = 0; i < current_size; i++)
 					{
 						new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
 						
@@ -411,7 +442,7 @@ namespace My
 				}
 
 				_first         = new_memory_ptr;
-				_last          = _first + size;
+				_last          = _first + current_size;
 				_capacity_last = _first + new_capacity;
 			}
 		}
@@ -422,14 +453,14 @@ namespace My
 	{
 		if (capacity() > size())
 		{
-			std::size_t size = this->size();
-			Type* new_memory_ptr = static_cast<Type*>(operator new(sizeof(Type) * size));
+			std::size_t current_size = size();
+			Type* new_memory_ptr = static_cast<Type*>(operator new(sizeof(Type) * current_size));
 
 			if (new_memory_ptr)
 			{
 				if (_first)
 				{
-					for (std::size_t i = 0; i < size; i++)
+					for (std::size_t i = 0; i < current_size; i++)
 					{
 						new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
 
@@ -440,8 +471,8 @@ namespace My
 				}
 
 				_first         = new_memory_ptr;
-				_last          = _first + size;
-				_capacity_last = _first + size;
+				_last          = _first + current_size;
+				_capacity_last = _first + current_size;
 			}
 		}
 	}
@@ -455,15 +486,25 @@ namespace My
 	{
 		if ((capacity() - size()) == 0)
 		{
-			std::size_t old_size = size();
-			std::size_t new_capacity = old_size > 1 ? static_cast<std::size_t>(old_size * _capacity_multiplier) : old_size + 1; //!!!
+			std::size_t current_size = size();
+			std::size_t new_capacity = 0;
+			
+			if (current_size > 1)
+			{
+				new_capacity = static_cast<std::size_t>(current_size * _capacity_multiplier);
+			}
+			else
+			{
+				new_capacity = current_size + 1;
+			}
+
 			Type* new_memory_ptr = static_cast<Type*>(operator new(sizeof(Type) * new_capacity));
 			
 			if (new_memory_ptr)
 			{
 				if (_first)
 				{
-					for (std::size_t i = 0; i < old_size; i++)
+					for (std::size_t i = 0; i < current_size; i++)
 					{
 						new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
 
@@ -474,7 +515,7 @@ namespace My
 				}
 
 				_first         = new_memory_ptr;
-				_last          = _first + old_size;
+				_last          = _first + current_size;
 				_capacity_last = _first + new_capacity;
 			}
 		}
@@ -509,9 +550,9 @@ namespace My
 	template<typename Type>
 	void Vector<Type>::resize(std::size_t count)
 	{
-		std::size_t old_size = size();
+		std::size_t current_size = size();
 
-		if (count > old_size)
+		if (count > current_size)
 		{
 			if (count > capacity())
 			{
@@ -521,7 +562,7 @@ namespace My
 				{
 					if (_first)
 					{
-						for (std::size_t i = 0; i < old_size; i++)
+						for (std::size_t i = 0; i < current_size; i++)
 						{
 							new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
 
@@ -536,18 +577,18 @@ namespace My
 				}
 			}
 
-			for (std::size_t i = old_size; i < count; i++)
+			for (std::size_t i = current_size; i < count; i++)
 			{
 				new(static_cast<void*>(_first + i)) Type();
 			}
 
-			_last = _first + count;
+			_last          = _first + count;
 			_capacity_last = _first + count;
 		}
 
-		if (count < old_size)
+		if (count < current_size)
 		{
-			for (std::size_t i = count; i < old_size; i++)
+			for (std::size_t i = count; i < current_size; i++)
 			{
 				(_first + i)->~Type();
 			}
@@ -559,9 +600,9 @@ namespace My
 	template<typename Type>
 	void Vector<Type>::resize(std::size_t count, const Type& value)
 	{
-		std::size_t old_size = size();
+		std::size_t current_size = size();
 
-		if (count > old_size)
+		if (count > current_size)
 		{
 			if (count > capacity())
 			{
@@ -571,7 +612,7 @@ namespace My
 				{
 					if (_first)
 					{
-						for (std::size_t i = 0; i < old_size; i++)
+						for (std::size_t i = 0; i < current_size; i++)
 						{
 							new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
 
@@ -586,18 +627,18 @@ namespace My
 				}
 			}
 
-			for (std::size_t i = old_size; i < count; i++)
+			for (std::size_t i = current_size; i < count; i++)
 			{
 				new(static_cast<void*>(_first + i)) Type(value);
 			}
 
-			_last = _first + count;
+			_last          = _first + count;
 			_capacity_last = _first + count;
 		}
 
-		if (count < old_size)
+		if (count < current_size)
 		{
-			for (std::size_t i = count; i < old_size; i++)
+			for (std::size_t i = count; i < current_size; i++)
 			{
 				(_first + i)->~Type();
 			}
