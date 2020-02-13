@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "TestHandle.h"
 
 void PrintDividingLine()

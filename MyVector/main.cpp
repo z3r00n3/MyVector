@@ -1,13 +1,16 @@
+#include "MyVector.h"
+#include "../Test/TestType.h"
+//#include "../Test/TestHandle.h"
+
 #include <iostream>
 #include <vector>
 
-#include "MyVector.h"
-#include "../Test/TestType.h"
-#include "../Test/TestHandle.h"
-
 int main()
 {
-	My::Vector<TestType> v1;
+	My::Vector<int> v(3, 7);
+
+
+	/*My::Vector<TestType> v1;
 	My::Vector<TestType> v2(3);
 	My::Vector<TestType> v3(3, TestType(3, "three"));
 	My::Vector<TestType> v4{ TestType(4, "four"), TestType(5, "five"), TestType(6, "six") };
@@ -136,7 +139,7 @@ int main()
 	PrintMyVectorInfo(v4);
 	PrintMyVectorInfo(v5);
 	PrintMyVectorInfo(v6);
-	PrintMyVectorInfo(v7);
+	PrintMyVectorInfo(v7);*/
 
 	std::cin.get();
 

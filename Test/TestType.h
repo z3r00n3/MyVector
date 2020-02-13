@@ -10,7 +10,7 @@ public:
 
 	TestType& operator=(const TestType& other);
 
-	friend std::ostream& operator<<(std::ostream& out_stream, const TestType& obj);
+	//friend std::ostream& operator<<(std::ostream& out_stream, const TestType& obj);
 
 private:
 	int   _int;

@@ -1,16 +1,11 @@
 #pragma once
 
-//#include <vector>
+#include "../MyVector/MyVector.h"
 
-//#include "../MyVector/MyVector.h"
+#include <iostream>
+#include <vector>
 
-template<typename Type> class Vector;
-
-template<typename Type>
-void PassingByValue(My::Vector<Type> v)
-{
-	PrintMyVectorInfo(v);
-}
+void PrintDividingLine();
 
 template<typename Type>
 void PrintMyVectorInfo(const My::Vector<Type>& vec)

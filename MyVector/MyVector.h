@@ -1,5 +1,9 @@
 #pragma once
 
+//#include "../Test/TestHandle.h"
+
+#include <iostream>
+
 namespace My
 {
 	template<typename Type>
@@ -65,7 +69,7 @@ namespace My
 #ifdef _DEBUG
 		std::cout << "My::Vector default constructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
-		PrintDividingLine();
+		//PrintDividingLine();
 #endif // _DEBUG
 	}
 
@@ -75,7 +79,7 @@ namespace My
 #ifdef _DEBUG
 		std::cout << "My::Vector (size) constructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
-		PrintDividingLine();
+		//PrintDividingLine();
 #endif // _DEBUG
 
 		_first = static_cast<Type*>(operator new(sizeof(Type) * size));
@@ -98,7 +102,7 @@ namespace My
 #ifdef _DEBUG
 		std::cout << "My::Vector (size, value) constructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
-		PrintDividingLine();
+		//PrintDividingLine();
 #endif // _DEBUG
 
 		_first = static_cast<Type*>(operator new(sizeof(Type) * size));
@@ -121,7 +125,7 @@ namespace My
 #ifdef _DEBUG
 		std::cout << "My::Vector (initialiser_list) constructor" << std::endl;
 		std::cout << "this: 0x" << this << "\tlist: 0x" << &list << std::endl;
-		PrintDividingLine();
+		//PrintDividingLine();
 #endif // _DEBUG
 
 		_first = static_cast<Type*>(operator new(sizeof(Type) * list.size()));
@@ -144,7 +148,7 @@ namespace My
 #ifdef _DEBUG
 		std::cout << "My::Vector copy constructor" << std::endl;
 		std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
-		PrintDividingLine();
+		//PrintDividingLine();
 #endif // _DEBUG
 
 		if (this != &other)
@@ -170,7 +174,7 @@ namespace My
 #ifdef _DEBUG
 		std::cout << "My::Vector destructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
-		PrintDividingLine();
+		//PrintDividingLine();
 #endif // _DEBUG
 
 		if (_first)
@@ -194,7 +198,7 @@ namespace My
 #ifdef _DEBUG
 		std::cout << "My::Vector operator=(& other)" << std::endl;
 		std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
-		PrintDividingLine();
+		//PrintDividingLine();
 #endif // _DEBUG
 
 		if (this != &other)
@@ -257,7 +261,7 @@ namespace My
 #ifdef _DEBUG
 		std::cout << "My::Vector operator=(initializer_list)" << std::endl;
 		std::cout << "this: 0x" << this << "\tlist: 0x" << &list << std::endl;
-		PrintDividingLine();
+		//PrintDividingLine();
 #endif // _DEBUG
 
 		if (size() != list.size())
