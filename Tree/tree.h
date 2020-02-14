@@ -12,8 +12,8 @@ namespace Tree
 		std::vector<Node<UserType>*> childs;
 		const UserType*              key;
 		std::size_t                  level;
+		bool                         destruction;
 		//std::size_t                  object_size_bytes;
-		//bool                         destruction;
 	};
 
 	template<typename UserType>
@@ -24,12 +24,13 @@ namespace Tree
 		~Tree();
 
 		Node<UserType>* add_node(UserType* parent_key, UserType* key);
+		Node<UserType>* mark_as_destructed(const UserType* key);
 		void print_tree() const;
 
 	private:
+		Node<UserType>* _search_node(const UserType* key, Node<UserType>* current_node_ptr) const;
 		Node<UserType>* _root_node_ptr;
 
-		Node<UserType>* _search_node(const UserType* key, Node<UserType>* current_node_ptr) const;
 		void _print_tree(const Node<UserType>* current_node_ptr) const;
 		void _destruct_nodes(Node<UserType> *current_node_ptr);
 	};
@@ -84,6 +85,19 @@ namespace Tree
 	}
 
 	template<typename UserType>
+	Node<UserType>* Tree<UserType>::mark_as_destructed(const UserType* key)
+	{
+		Node<UserType>* current_node_ptr = _search_node(key, _root_node_ptr);
+
+		if (current_node_ptr)
+		{
+			current_node_ptr->destruction = true;
+		}
+
+		return current_node_ptr;
+	}
+
+	template<typename UserType>
 	void Tree<UserType>::print_tree() const
 	{
 		std::cout << "root" << std::endl;
@@ -107,6 +121,11 @@ namespace Tree
 				for (std::size_t i = 0; i < current_node_ptr->childs.size(); i++)
 				{
 					found = _search_node(key, current_node_ptr->childs[i]);
+					
+					if (found)
+					{
+						break;
+					}
 				}
 			}
 		}
@@ -127,7 +146,18 @@ namespace Tree
 				}
 				std::cout << '\t';
 			}
-			std::cout << "0x" << current_node_ptr->childs[i]->key << std::endl;
+
+#ifdef _DEBUG
+			std::cout << " node 0x" << current_node_ptr->childs[i] << ": key ";
+#endif // _DEBUG
+
+			std::cout << "0x" << current_node_ptr->childs[i]->key;
+
+			if (current_node_ptr->childs[i]->destruction)
+			{
+				std::cout << " destructed";
+			}
+			std::cout << std::endl;
 
 			_print_tree(current_node_ptr->childs[i]);
 		}
@@ -139,8 +169,12 @@ namespace Tree
 		for (std::size_t i = 0; i < current_node_ptr->childs.size(); i++)
 		{
 			_destruct_nodes(current_node_ptr->childs[i]);
-			std::cout << "destruction 0x" << current_node_ptr << std::endl;
-			delete current_node_ptr;
 		}
+
+#ifdef _DEBUG
+		std::cout << "destruction 0x" << current_node_ptr << std::endl;
+#endif // _DEBUG
+
+		delete current_node_ptr;
 	}
 }

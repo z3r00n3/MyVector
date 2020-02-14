@@ -1,5 +1,5 @@
-#include "MyVector.h"
-#include "../Test/TestType.h"
+#include "my_vector.h"
+//#include "../Test/TestType.h"
 //#include "../Test/TestHandle.h"
 
 #include <iostream>
@@ -8,7 +8,6 @@
 int main()
 {
 	My::Vector<int> v(3, 7);
-
 
 	/*My::Vector<TestType> v1;
 	My::Vector<TestType> v2(3);

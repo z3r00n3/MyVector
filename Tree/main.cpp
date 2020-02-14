@@ -11,6 +11,7 @@ int main()
 	int d = 1;
 	int e = 9;
 	int f = 5;
+	int g = 11;
 
 	std::cout << "a = 0x" << &a << std::endl;
 	std::cout << "b = 0x" << &b << std::endl;
@@ -18,6 +19,7 @@ int main()
 	std::cout << "d = 0x" << &d << std::endl;
 	std::cout << "e = 0x" << &e << std::endl;
 	std::cout << "f = 0x" << &f << std::endl;
+	std::cout << "g = 0x" << &g << std::endl;
 
 	std::cout << std::endl;
 
@@ -27,7 +29,12 @@ int main()
 	tree.add_node(&c, &e);
 	tree.add_node(&e, &f);
 	tree.add_node(nullptr, &b);
-
+	tree.add_node(&d, &g);
+	
+	tree.mark_as_destructed(&a);
+	tree.mark_as_destructed(&e);
+	tree.mark_as_destructed(&f);
+	
 	tree.print_tree();
 
 	std::cin.get();

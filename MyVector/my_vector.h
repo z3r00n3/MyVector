@@ -1,38 +1,39 @@
 #pragma once
 
 //#include "../Test/TestHandle.h"
-
-#include <iostream>
+#ifdef _DEBUG
+	#include <iostream>
+#endif // _DEBUG
 
 namespace My
 {
-	template<typename Type>
+	template<typename UserType>
 	class Vector
 	{
 	public:
 		// Constructors and Destructor
 		Vector();
 		Vector(std::size_t size);
-		Vector(std::size_t size, const Type& value);
-		Vector(std::initializer_list<Type> list);
-		Vector(const Vector<Type>& other);
+		Vector(std::size_t size, const UserType& value);
+		Vector(std::initializer_list<UserType> list);
+		Vector(const Vector<UserType>& other);
 		~Vector();
 
 		// Member functions
-		Vector<Type>& operator=(const Vector<Type>& other);
-		Vector<Type>& operator=(std::initializer_list<Type> list);
+		Vector<UserType>& operator=(const Vector<UserType>& other);
+		Vector<UserType>& operator=(std::initializer_list<UserType> list);
 
 		// Element access
-		      Type& at(std::size_t pos);
-		const Type& at(std::size_t pos) const;
-		      Type& operator[](std::size_t idx);
-		const Type& operator[](std::size_t idx) const;
-		      Type& front();
-		const Type& front() const;
-		      Type& back();
-		const Type& back() const;
-		      Type* data();
-		const Type* data() const;
+		      UserType& at(std::size_t pos);
+		const UserType& at(std::size_t pos) const;
+		      UserType& operator[](std::size_t idx);
+		const UserType& operator[](std::size_t idx) const;
+		      UserType& front();
+		const UserType& front() const;
+		      UserType& back();
+		const UserType& back() const;
+		      UserType* data();
+		const UserType* data() const;
 
 		// Capacity
 		bool empty() const;
@@ -42,17 +43,17 @@ namespace My
 		void shrink_to_fit();
 
 		// Modifiers
-		void push_back(const Type& value);
+		void push_back(const UserType& value);
 		void pop_back();
 		void clear();
 		void resize(std::size_t count);
-		void resize(std::size_t count, const Type& value);
-		void swap(Vector<Type>& other);
+		void resize(std::size_t count, const UserType& value);
+		void swap(Vector<UserType>& other);
 	
 	private:
-		Type*       _first;
-		Type*       _last;
-		Type*       _capacity_last;
+		UserType*       _first;
+		UserType*       _last;
+		UserType*       _capacity_last;
 		const float _capacity_multiplier = 1.5f;
 		
 		// Member functions
@@ -62,33 +63,35 @@ namespace My
 	//                        CONSTRUCTORS AND DESTRUCTOR                        //
 	///////////////////////////////////////////////////////////////////////////////
 
-	template<typename Type>
-	Vector<Type>::Vector()
+	template<typename UserType>
+	Vector<UserType>::Vector()
 		: _first(nullptr), _last(nullptr), _capacity_last(nullptr)
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector default constructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
+		std::cout << std::endl;
 		//PrintDividingLine();
 #endif // _DEBUG
 	}
 
-	template<typename Type>
-	Vector<Type>::Vector(std::size_t size)
+	template<typename UserType>
+	Vector<UserType>::Vector(std::size_t size)
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector (size) constructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
+		std::cout << std::endl;
 		//PrintDividingLine();
 #endif // _DEBUG
 
-		_first = static_cast<Type*>(operator new(sizeof(Type) * size));
+		_first = static_cast<UserType*>(operator new(sizeof(UserType) * size));
 		
 		if (_first)
 		{
 			for (std::size_t i = 0; i < size; i++)
 			{
-				new(static_cast<void*>(_first + i)) Type();
+				new(static_cast<void*>(_first + i)) UserType();
 			}
 		
 			_last          = _first + size;
@@ -96,22 +99,23 @@ namespace My
 		}
 	}
 
-	template<typename Type>
-	Vector<Type>::Vector(std::size_t size, const Type& value)
+	template<typename UserType>
+	Vector<UserType>::Vector(std::size_t size, const UserType& value)
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector (size, value) constructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
+		std::cout << std::endl;
 		//PrintDividingLine();
 #endif // _DEBUG
 
-		_first = static_cast<Type*>(operator new(sizeof(Type) * size));
+		_first = static_cast<UserType*>(operator new(sizeof(UserType) * size));
 		
 		if (_first)
 		{
 			for (std::size_t i = 0; i < size; i++)
 			{
-				new(static_cast<void*>(_first + i)) Type(value);
+				new(static_cast<void*>(_first + i)) UserType(value);
 			}
 			
 			_last          = _first + size;
@@ -119,22 +123,23 @@ namespace My
 		}
 	}
 
-	template<typename Type>
-	Vector<Type>::Vector(std::initializer_list<Type> list)
+	template<typename UserType>
+	Vector<UserType>::Vector(std::initializer_list<UserType> list)
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector (initialiser_list) constructor" << std::endl;
 		std::cout << "this: 0x" << this << "\tlist: 0x" << &list << std::endl;
+		std::cout << std::endl;
 		//PrintDividingLine();
 #endif // _DEBUG
 
-		_first = static_cast<Type*>(operator new(sizeof(Type) * list.size()));
+		_first = static_cast<UserType*>(operator new(sizeof(UserType) * list.size()));
 		
 		if (_first)
 		{
 			for (std::size_t i = 0; i < list.size(); i++)
 			{
-				new(static_cast<void*>(_first + i)) Type(*(list.begin() + i));
+				new(static_cast<void*>(_first + i)) UserType(*(list.begin() + i));
 			}
 	
 			_last          = _first + list.size();
@@ -142,24 +147,25 @@ namespace My
 		}
 	}
 
-	template<typename Type>
-	Vector<Type>::Vector(const Vector<Type>& other)
+	template<typename UserType>
+	Vector<UserType>::Vector(const Vector<UserType>& other)
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector copy constructor" << std::endl;
 		std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
+		std::cout << std::endl;
 		//PrintDividingLine();
 #endif // _DEBUG
 
 		if (this != &other)
 		{
-			_first = static_cast<Type*>(operator new(sizeof(Type) * other.size()));
+			_first = static_cast<UserType*>(operator new(sizeof(UserType) * other.size()));
 			
 			if (_first)
 			{
 				for (std::size_t i = 0; i < other.size(); i++)
 				{
-					new(static_cast<void*>(_first + i)) Type(*(other.data() + i));
+					new(static_cast<void*>(_first + i)) UserType(*(other.data() + i));
 				}
 			
 				_last          = _first + other.size();
@@ -168,12 +174,13 @@ namespace My
 		}
 	}
 
-	template<typename Type>
-	Vector<Type>::~Vector()
+	template<typename UserType>
+	Vector<UserType>::~Vector()
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector destructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
+		std::cout << std::endl;
 		//PrintDividingLine();
 #endif // _DEBUG
 
@@ -181,7 +188,7 @@ namespace My
 		{
 			for (std::size_t i = 0; i < size(); i++)
 			{
-				(_first + i)->~Type();
+				(_first + i)->~UserType();
 			}
 
 			operator delete(static_cast<void*>(_first));
@@ -192,12 +199,13 @@ namespace My
 	//                            MEMBER FUNCTIONS                               //
 	///////////////////////////////////////////////////////////////////////////////
 
-	template<typename Type>
-	Vector<Type>& Vector<Type>::operator=(const Vector<Type>& other)
+	template<typename UserType>
+	Vector<UserType>& Vector<UserType>::operator=(const Vector<UserType>& other)
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector operator=(& other)" << std::endl;
 		std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
+		std::cout << std::endl;
 		//PrintDividingLine();
 #endif // _DEBUG
 
@@ -220,19 +228,19 @@ namespace My
 				{
 					for (std::size_t i = 0; i < size(); i++)
 					{
-						(_first + i)->~Type();
+						(_first + i)->~UserType();
 					}
 
 					operator delete(static_cast<void*>(_first));
 				}
 
-				_first = static_cast<Type*>(operator new(sizeof(Type) * new_capacity));
+				_first = static_cast<UserType*>(operator new(sizeof(UserType) * new_capacity));
 				
 				if (_first)
 				{
 					for (std::size_t i = 0; i < other.size(); i++)
 					{
-						new(static_cast<void*>(_first + i)) Type(*(other.data() + i));
+						new(static_cast<void*>(_first + i)) UserType(*(other.data() + i));
 					}
 				
 					_last          = _first + other.size();
@@ -255,12 +263,13 @@ namespace My
 		return *this;
 	}
 
-	template<typename Type>
-	Vector<Type>& Vector<Type>::operator=(std::initializer_list<Type> list)
+	template<typename UserType>
+	Vector<UserType>& Vector<UserType>::operator=(std::initializer_list<UserType> list)
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector operator=(initializer_list)" << std::endl;
 		std::cout << "this: 0x" << this << "\tlist: 0x" << &list << std::endl;
+		std::cout << std::endl;
 		//PrintDividingLine();
 #endif // _DEBUG
 
@@ -281,19 +290,19 @@ namespace My
 			{
 				for (std::size_t i = 0; i < size(); i++)
 				{
-					(_first + i)->~Type();
+					(_first + i)->~UserType();
 				}
 
 				operator delete(static_cast<void*>(_first));
 			}
 
-			_first = static_cast<Type*>(operator new(sizeof(Type) * new_capacity));
+			_first = static_cast<UserType*>(operator new(sizeof(UserType) * new_capacity));
 
 			if (_first)
 			{
 				for (std::size_t i = 0; i < list.size(); i++)
 				{
-					new(static_cast<void*>(_first + i)) Type(*(list.begin() + i));
+					new(static_cast<void*>(_first + i)) UserType(*(list.begin() + i));
 				}
 
 				_last          = _first + list.size();
@@ -318,8 +327,8 @@ namespace My
 	//                             ELEMENT ACCESS                                //
 	///////////////////////////////////////////////////////////////////////////////
 
-	template<typename Type>
-	Type& Vector<Type>::at(std::size_t pos)
+	template<typename UserType>
+	UserType& Vector<UserType>::at(std::size_t pos)
 	{
 		if (_first && size() > pos)
 		{
@@ -331,8 +340,8 @@ namespace My
 		}
 	}
 
-	template<typename Type>
-	const Type& Vector<Type>::at(std::size_t pos) const
+	template<typename UserType>
+	const UserType& Vector<UserType>::at(std::size_t pos) const
 	{
 		if (_first && size() > pos)
 		{
@@ -344,50 +353,50 @@ namespace My
 		}
 	}
 
-	template<typename Type>
-	inline Type& Vector<Type>::operator[](std::size_t idx)
+	template<typename UserType>
+	inline UserType& Vector<UserType>::operator[](std::size_t idx)
 	{
 		return *(_first + idx);
 	}
 
-	template<typename Type>
-	inline const Type& Vector<Type>::operator[](std::size_t idx) const
+	template<typename UserType>
+	inline const UserType& Vector<UserType>::operator[](std::size_t idx) const
 	{
 		return *(_first + idx);
 	}
 
-	template<typename Type>
-	inline Type& Vector<Type>::front()
+	template<typename UserType>
+	inline UserType& Vector<UserType>::front()
 	{
 		return *_first;
 	}
 
-	template<typename Type>
-	inline const Type& Vector<Type>::front() const
+	template<typename UserType>
+	inline const UserType& Vector<UserType>::front() const
 	{
 		return *_first;
 	}
 
-	template<typename Type>
-	inline Type& Vector<Type>::back()
+	template<typename UserType>
+	inline UserType& Vector<UserType>::back()
 	{
 		return *(_last - 1);
 	}
 
-	template<typename Type>
-	inline const Type& Vector<Type>::back() const
+	template<typename UserType>
+	inline const UserType& Vector<UserType>::back() const
 	{
 		return *(_last - 1);
 	}
 
-	template<typename Type>
-	inline Type* Vector<Type>::data()
+	template<typename UserType>
+	inline UserType* Vector<UserType>::data()
 	{
 		return _first;
 	}
 
-	template<typename Type>
-	inline const Type* Vector<Type>::data() const
+	template<typename UserType>
+	inline const UserType* Vector<UserType>::data() const
 	{
 		return _first;
 	}
@@ -396,8 +405,8 @@ namespace My
 	//                                CAPACITY                                   //
 	///////////////////////////////////////////////////////////////////////////////
 
-	template<typename Type>
-	inline bool Vector<Type>::empty() const
+	template<typename UserType>
+	inline bool Vector<UserType>::empty() const
 	{
 		if (_first == _last)
 		{
@@ -409,24 +418,24 @@ namespace My
 		}
 	}
 
-	template<typename Type>
-	inline std::size_t Vector<Type>::size() const
+	template<typename UserType>
+	inline std::size_t Vector<UserType>::size() const
 	{
 		return _last - _first;
 	}
 
-	template<typename Type>
-	inline std::size_t Vector<Type>::capacity() const
+	template<typename UserType>
+	inline std::size_t Vector<UserType>::capacity() const
 	{
 		return _capacity_last - _first;
 	}
 
-	template<typename Type>
-	void Vector<Type>::reserve(std::size_t new_capacity)
+	template<typename UserType>
+	void Vector<UserType>::reserve(std::size_t new_capacity)
 	{
 		if (new_capacity > capacity())
 		{
-			Type* new_memory_ptr = static_cast<Type*>(operator new(sizeof(Type) * new_capacity));
+			UserType* new_memory_ptr = static_cast<UserType*>(operator new(sizeof(UserType) * new_capacity));
 
 			if (new_memory_ptr)
 			{
@@ -436,9 +445,9 @@ namespace My
 				{
 					for (std::size_t i = 0; i < current_size; i++)
 					{
-						new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
+						new(static_cast<void*>(new_memory_ptr + i)) UserType(*(_first + i));
 						
-						(_first + i)->~Type();
+						(_first + i)->~UserType();
 					}
 
 					operator delete(static_cast<void*>(_first));
@@ -452,13 +461,13 @@ namespace My
 		}
 	}
 
-	template<typename Type>
-	void Vector<Type>::shrink_to_fit()
+	template<typename UserType>
+	void Vector<UserType>::shrink_to_fit()
 	{
 		if (capacity() > size())
 		{
 			std::size_t current_size = size();
-			Type* new_memory_ptr = static_cast<Type*>(operator new(sizeof(Type) * current_size));
+			UserType* new_memory_ptr = static_cast<UserType*>(operator new(sizeof(UserType) * current_size));
 
 			if (new_memory_ptr)
 			{
@@ -466,9 +475,9 @@ namespace My
 				{
 					for (std::size_t i = 0; i < current_size; i++)
 					{
-						new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
+						new(static_cast<void*>(new_memory_ptr + i)) UserType(*(_first + i));
 
-						(_first + i)->~Type();
+						(_first + i)->~UserType();
 					}
 
 					operator delete(static_cast<void*>(_first));
@@ -485,8 +494,8 @@ namespace My
 	//                               MODIFIERS                                   //
 	///////////////////////////////////////////////////////////////////////////////
 
-	template<typename Type>
-	void Vector<Type>::push_back(const Type& value)
+	template<typename UserType>
+	void Vector<UserType>::push_back(const UserType& value)
 	{
 		if ((capacity() - size()) == 0)
 		{
@@ -502,7 +511,7 @@ namespace My
 				new_capacity = current_size + 1;
 			}
 
-			Type* new_memory_ptr = static_cast<Type*>(operator new(sizeof(Type) * new_capacity));
+			UserType* new_memory_ptr = static_cast<UserType*>(operator new(sizeof(UserType) * new_capacity));
 			
 			if (new_memory_ptr)
 			{
@@ -510,9 +519,9 @@ namespace My
 				{
 					for (std::size_t i = 0; i < current_size; i++)
 					{
-						new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
+						new(static_cast<void*>(new_memory_ptr + i)) UserType(*(_first + i));
 
-						(_first + i)->~Type();
+						(_first + i)->~UserType();
 					}
 
 					operator delete(static_cast<void*>(_first));
@@ -524,35 +533,35 @@ namespace My
 			}
 		}
 		
-		new(static_cast<void*>(_last)) Type(value);
+		new(static_cast<void*>(_last)) UserType(value);
 		_last++;
 	}
 
-	template<typename Type>
-	inline void Vector<Type>::pop_back()
+	template<typename UserType>
+	inline void Vector<UserType>::pop_back()
 	{
 		if (_first)
 		{
-			(_first + (size() - 1))->~Type();
+			(_first + (size() - 1))->~UserType();
 			_last--;
 		}
 	}
 
-	template<typename Type>
-	inline void Vector<Type>::clear()
+	template<typename UserType>
+	inline void Vector<UserType>::clear()
 	{
 		if (_first)
 		{
 			for (std::size_t i = 0; i < size(); i++)
 			{
-				(_first + i)->~Type();
+				(_first + i)->~UserType();
 			}
 			_last = _first;
 		}
 	}
 
-	template<typename Type>
-	void Vector<Type>::resize(std::size_t count)
+	template<typename UserType>
+	void Vector<UserType>::resize(std::size_t count)
 	{
 		std::size_t current_size = size();
 
@@ -560,7 +569,7 @@ namespace My
 		{
 			if (count > capacity())
 			{
-				Type* new_memory_ptr = static_cast<Type*>(operator new(sizeof(Type) * count));
+				UserType* new_memory_ptr = static_cast<UserType*>(operator new(sizeof(UserType) * count));
 			
 				if (new_memory_ptr)
 				{
@@ -568,9 +577,9 @@ namespace My
 					{
 						for (std::size_t i = 0; i < current_size; i++)
 						{
-							new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
+							new(static_cast<void*>(new_memory_ptr + i)) UserType(*(_first + i));
 
-							(_first + i)->~Type();
+							(_first + i)->~UserType();
 						}
 
 						operator delete(static_cast<void*>(_first));
@@ -583,7 +592,7 @@ namespace My
 
 			for (std::size_t i = current_size; i < count; i++)
 			{
-				new(static_cast<void*>(_first + i)) Type();
+				new(static_cast<void*>(_first + i)) UserType();
 			}
 
 			_last          = _first + count;
@@ -594,15 +603,15 @@ namespace My
 		{
 			for (std::size_t i = count; i < current_size; i++)
 			{
-				(_first + i)->~Type();
+				(_first + i)->~UserType();
 			}
 
 			_last = _first + count;
 		}
 	}
 	
-	template<typename Type>
-	void Vector<Type>::resize(std::size_t count, const Type& value)
+	template<typename UserType>
+	void Vector<UserType>::resize(std::size_t count, const UserType& value)
 	{
 		std::size_t current_size = size();
 
@@ -610,7 +619,7 @@ namespace My
 		{
 			if (count > capacity())
 			{
-				Type* new_memory_ptr = static_cast<Type*>(operator new(sizeof(Type) * count));
+				UserType* new_memory_ptr = static_cast<UserType*>(operator new(sizeof(UserType) * count));
 
 				if (new_memory_ptr)
 				{
@@ -618,9 +627,9 @@ namespace My
 					{
 						for (std::size_t i = 0; i < current_size; i++)
 						{
-							new(static_cast<void*>(new_memory_ptr + i)) Type(*(_first + i));
+							new(static_cast<void*>(new_memory_ptr + i)) UserType(*(_first + i));
 
-							(_first + i)->~Type();
+							(_first + i)->~UserType();
 						}
 
 						operator delete(static_cast<void*>(_first));
@@ -633,7 +642,7 @@ namespace My
 
 			for (std::size_t i = current_size; i < count; i++)
 			{
-				new(static_cast<void*>(_first + i)) Type(value);
+				new(static_cast<void*>(_first + i)) UserType(value);
 			}
 
 			_last          = _first + count;
@@ -644,19 +653,19 @@ namespace My
 		{
 			for (std::size_t i = count; i < current_size; i++)
 			{
-				(_first + i)->~Type();
+				(_first + i)->~UserType();
 			}
 
 			_last = _first + count;
 		}
 	}
 
-	template<typename Type>
-	void Vector<Type>::swap(Vector<Type>& other)
+	template<typename UserType>
+	void Vector<UserType>::swap(Vector<UserType>& other)
 	{
-		Type* tmp_first         = _first;
-		Type* tmp_last          = _last;
-		Type* tmp_capacity_last = _capacity_last;
+		UserType* tmp_first         = _first;
+		UserType* tmp_last          = _last;
+		UserType* tmp_capacity_last = _capacity_last;
 		
 		_first         = other._first;
 		_last          = other._last;
