@@ -1,9 +1,6 @@
 #pragma once
 
-//#include "../Test/TestHandle.h"
-#ifdef _DEBUG
-	#include <iostream>
-#endif // _DEBUG
+#include <iostream>
 
 namespace My
 {
@@ -18,7 +15,7 @@ namespace My
 		Vector(std::initializer_list<UserType> list);
 		Vector(const Vector<UserType>& other);
 		~Vector();
-
+		
 		// Member functions
 		Vector<UserType>& operator=(const Vector<UserType>& other);
 		Vector<UserType>& operator=(std::initializer_list<UserType> list);
@@ -50,6 +47,9 @@ namespace My
 		void resize(std::size_t count, const UserType& value);
 		void swap(Vector<UserType>& other);
 	
+		// Friend functions
+		template<typename UserType> friend std::ostream& operator<<(std::ostream& os, const Vector<UserType>& vec);
+
 	private:
 		UserType*       _first;
 		UserType*       _last;
@@ -71,7 +71,7 @@ namespace My
 		std::cout << "My::Vector default constructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
 		std::cout << std::endl;
-		//PrintDividingLine();
+		//print_dividing_line();
 #endif // _DEBUG
 	}
 
@@ -82,7 +82,7 @@ namespace My
 		std::cout << "My::Vector (size) constructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
 		std::cout << std::endl;
-		//PrintDividingLine();
+		//print_dividing_line();
 #endif // _DEBUG
 
 		_first = static_cast<UserType*>(operator new(sizeof(UserType) * size));
@@ -106,7 +106,7 @@ namespace My
 		std::cout << "My::Vector (size, value) constructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
 		std::cout << std::endl;
-		//PrintDividingLine();
+		//print_dividing_line();
 #endif // _DEBUG
 
 		_first = static_cast<UserType*>(operator new(sizeof(UserType) * size));
@@ -130,7 +130,7 @@ namespace My
 		std::cout << "My::Vector (initialiser_list) constructor" << std::endl;
 		std::cout << "this: 0x" << this << "\tlist: 0x" << &list << std::endl;
 		std::cout << std::endl;
-		//PrintDividingLine();
+		//print_dividing_line();
 #endif // _DEBUG
 
 		_first = static_cast<UserType*>(operator new(sizeof(UserType) * list.size()));
@@ -154,7 +154,7 @@ namespace My
 		std::cout << "My::Vector copy constructor" << std::endl;
 		std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
 		std::cout << std::endl;
-		//PrintDividingLine();
+		//print_dividing_line();
 #endif // _DEBUG
 
 		if (this != &other)
@@ -181,7 +181,7 @@ namespace My
 		std::cout << "My::Vector destructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
 		std::cout << std::endl;
-		//PrintDividingLine();
+		//print_dividing_line();
 #endif // _DEBUG
 
 		if (_first)
@@ -206,7 +206,7 @@ namespace My
 		std::cout << "My::Vector operator=(& other)" << std::endl;
 		std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
 		std::cout << std::endl;
-		//PrintDividingLine();
+		//print_dividing_line();
 #endif // _DEBUG
 
 		if (this != &other)
@@ -270,7 +270,7 @@ namespace My
 		std::cout << "My::Vector operator=(initializer_list)" << std::endl;
 		std::cout << "this: 0x" << this << "\tlist: 0x" << &list << std::endl;
 		std::cout << std::endl;
-		//PrintDividingLine();
+		//print_dividing_line();
 #endif // _DEBUG
 
 		if (size() != list.size())
@@ -674,6 +674,35 @@ namespace My
 		other._first         = tmp_first;
 		other._last          = tmp_last;
 		other._capacity_last = tmp_capacity_last;
+	}
+	
+	///////////////////////////////////////////////////////////////////////////////
+	//                             FRIEND FUNCTIONS                              //
+	///////////////////////////////////////////////////////////////////////////////
+
+	template<typename UserType>
+	std::ostream& operator<<(std::ostream& os, const Vector<UserType>& vec)
+	{
+		os << std::boolalpha;
+
+		//print_dividing_line();
+
+		os << "Data stored in My::Vector: ";
+
+		for (std::size_t i = 0; i < vec.size(); i++)
+		{
+			os << vec[i] << " ";
+		}
+		
+		os << std::endl;
+
+		os << "Empty is:\t"    << vec.empty()    << std::endl;
+		os << "Size is:\t"     << vec.size()     << std::endl;
+		os << "Capacity is:\t" << vec.capacity() << std::endl;
+
+		//print_dividing_line();
+
+		return os;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////

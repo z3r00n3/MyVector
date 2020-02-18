@@ -11,37 +11,88 @@ TestType::TestType()
 #endif // _DEBUG
 }
 
-TestType::TestType(int* arr, std::size_t arr_size, std::string str)
+TestType::TestType(std::initializer_list<int> list, std::string str)
 {
 #ifdef _DEBUG
-	std::cout << "TestType (int, float*, std::size_t, std::string) constructor" << std::endl;
+	std::cout << "TestType (std::initializer_list<int>, std::string) constructor" << std::endl;
 	std::cout << std::endl;
 #endif // _DEBUG
 
 	try
 	{
-		_arr = new int[arr_size];
+		_arr = new int[list.size()];
 
-		for (std::size_t i = 0; i < arr_size; i++)
+		for (std::size_t i = 0; i < list.size(); i++)
 		{
-			*(_arr + i) = *(arr + i);
+			*(_arr + i) = *(list.begin() + i);
 		}
 
-		_arr_size = arr_size;
+		_arr_size = list.size();
 	}
-	catch (std::bad_alloc& e)
+	catch (std::bad_alloc& ex)
 	{
-		std::cerr << "std::bad_alloc - " << e.what() << std::endl;
+		std::cerr << "std::bad_alloc - " << ex.what() << std::endl;
 
 		_arr = nullptr;
 		_arr_size = 0;
 	}
 
 	_str = str;
+}
 
-	for (std::size_t i = 0; i < _arr_size; i++)
+TestType::TestType(const TestType& other)
+{
+#ifdef _DEBUG
+	std::cout << "TestType copy constructor" << std::endl;
+	std::cout << std::endl;
+#endif // _DEBUG
+
+	if (this != &other)
 	{
-		std::cout << *(_arr + i) << std::endl;
+		if (_arr_size < other._arr_size)
+		{
+			try
+			{
+				int* new_memory_ptr = new int[other._arr_size];
+
+				for (std::size_t i = 0; i < other._arr_size; i++)
+				{
+					*(new_memory_ptr + i) = *(other._arr + i);
+				}
+
+				delete[] _arr;
+			
+				_arr      = new_memory_ptr;
+				_arr_size = other._arr_size;
+			}
+			catch (std::bad_alloc& ex)
+			{
+				std::cerr << "std::bad_alloc - " << ex.what() << std::endl;
+			}
+
+			_str = other._str;
+		}
+		if (_arr_size == other._arr_size)
+		{
+			for (std::size_t i = 0; i < other._arr_size; i++)
+			{
+				*(_arr + i) = *(other._arr + i);
+			}
+
+			_str = other._str;
+		}
+		if (_arr_size > other._arr_size)
+		{
+			for (std::size_t i = 0; i < other._arr_size; i++)
+			{
+				*(_arr + i) = *(other._arr + i);
+			}
+
+			_arr_size = other._arr_size;
+			_str      = other._str;
+		}
+
+		_str = other._str;
 	}
 }
 
@@ -56,4 +107,32 @@ TestType::~TestType()
 	{
 		delete[] _arr;
 	}
+}
+
+std::ostream& operator<<(std::ostream& stream, const TestType& obj)
+{
+	stream << "{ array = { ";
+
+	for (std::size_t i = 0; i < obj._arr_size; i++)
+	{
+		stream << *(obj._arr + i);
+
+		if (i < obj._arr_size - 1)
+		{
+			stream << ", ";
+		}
+	}
+
+	stream << " }, string = " << obj._str << " }";
+
+	return stream;
+}
+
+void print_dividing_line()
+{
+	for (std::size_t i = 0; i < 80; i++)
+	{
+		std::cout << "*";
+	}
+	std::cout << std::endl;
 }

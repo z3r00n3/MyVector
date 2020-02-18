@@ -1,14 +1,14 @@
 #include "my_vector.h"
-//#include "../Test/TestType.h"
-//#include "../Test/TestHandle.h"
+#include "test_handle.h"
 
 #include <iostream>
 #include <vector>
 
 int main()
 {
-	My::Vector<int> v(3, 7);
-
+	My::Vector<TestType> v(3, TestType({ 1, 2, 3}, "hello"));
+	std::cout << v << std::endl;
+	//print_dividing_line();
 	/*My::Vector<TestType> v1;
 	My::Vector<TestType> v2(3);
 	My::Vector<TestType> v3(3, TestType(3, "three"));
