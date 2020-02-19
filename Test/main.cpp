@@ -5,11 +5,15 @@
 
 int main()
 {
-	TestType test({ 1, 2, 3 }, "hello");
-	TestType t = test;
+	TestType test1({ 1, 2, 3 }, "hello");
+	TestType test2 = test1;
+	TestType test3;
 
-	std::cout << test << std::endl;
-	std::cout << t << std::endl;
+	test3 = test2;
+
+	std::cout << test1 << std::endl;
+	std::cout << test2 << std::endl;
+	std::cout << test3 << std::endl;
 
 	return 0;
 }

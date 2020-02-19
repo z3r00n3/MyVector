@@ -1,5 +1,7 @@
 #pragma once
 
+#include "test_handle.h"
+
 #include <iostream>
 
 namespace My
@@ -68,10 +70,9 @@ namespace My
 		: _first(nullptr), _last(nullptr), _capacity_last(nullptr)
 	{
 #ifdef _DEBUG
-		std::cout << "My::Vector default constructor" << std::endl;
+		std::cout << "(+) My::Vector default constructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
-		std::cout << std::endl;
-		//print_dividing_line();
+		print_dividing_line();
 #endif // _DEBUG
 	}
 
@@ -79,10 +80,9 @@ namespace My
 	Vector<UserType>::Vector(std::size_t size)
 	{
 #ifdef _DEBUG
-		std::cout << "My::Vector (size) constructor" << std::endl;
+		std::cout << "(+) My::Vector (size) constructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
-		std::cout << std::endl;
-		//print_dividing_line();
+		print_dividing_line();
 #endif // _DEBUG
 
 		_first = static_cast<UserType*>(operator new(sizeof(UserType) * size));
@@ -103,10 +103,9 @@ namespace My
 	Vector<UserType>::Vector(std::size_t size, const UserType& value)
 	{
 #ifdef _DEBUG
-		std::cout << "My::Vector (size, value) constructor" << std::endl;
+		std::cout << "(+) My::Vector (size, value) constructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
-		std::cout << std::endl;
-		//print_dividing_line();
+		print_dividing_line();
 #endif // _DEBUG
 
 		_first = static_cast<UserType*>(operator new(sizeof(UserType) * size));
@@ -127,10 +126,9 @@ namespace My
 	Vector<UserType>::Vector(std::initializer_list<UserType> list)
 	{
 #ifdef _DEBUG
-		std::cout << "My::Vector (initialiser_list) constructor" << std::endl;
-		std::cout << "this: 0x" << this << "\tlist: 0x" << &list << std::endl;
-		std::cout << std::endl;
-		//print_dividing_line();
+		std::cout << "(+) My::Vector (initialiser_list) constructor" << std::endl;
+		std::cout << "this: 0x" << this << std::endl;
+		print_dividing_line();
 #endif // _DEBUG
 
 		_first = static_cast<UserType*>(operator new(sizeof(UserType) * list.size()));
@@ -151,10 +149,9 @@ namespace My
 	Vector<UserType>::Vector(const Vector<UserType>& other)
 	{
 #ifdef _DEBUG
-		std::cout << "My::Vector copy constructor" << std::endl;
+		std::cout << "(+) My::Vector copy constructor" << std::endl;
 		std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
-		std::cout << std::endl;
-		//print_dividing_line();
+		print_dividing_line();
 #endif // _DEBUG
 
 		if (this != &other)
@@ -178,10 +175,9 @@ namespace My
 	Vector<UserType>::~Vector()
 	{
 #ifdef _DEBUG
-		std::cout << "My::Vector destructor" << std::endl;
+		std::cout << "(-) My::Vector destructor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
-		std::cout << std::endl;
-		//print_dividing_line();
+		print_dividing_line();
 #endif // _DEBUG
 
 		if (_first)
@@ -203,10 +199,9 @@ namespace My
 	Vector<UserType>& Vector<UserType>::operator=(const Vector<UserType>& other)
 	{
 #ifdef _DEBUG
-		std::cout << "My::Vector operator=(& other)" << std::endl;
+		std::cout << "(~) My::Vector operator=(& other)" << std::endl;
 		std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
-		std::cout << std::endl;
-		//print_dividing_line();
+		print_dividing_line();
 #endif // _DEBUG
 
 		if (this != &other)
@@ -267,10 +262,9 @@ namespace My
 	Vector<UserType>& Vector<UserType>::operator=(std::initializer_list<UserType> list)
 	{
 #ifdef _DEBUG
-		std::cout << "My::Vector operator=(initializer_list)" << std::endl;
-		std::cout << "this: 0x" << this << "\tlist: 0x" << &list << std::endl;
-		std::cout << std::endl;
-		//print_dividing_line();
+		std::cout << "(~) My::Vector operator=(initializer_list)" << std::endl;
+		std::cout << "this: 0x" << this << std::endl;
+		print_dividing_line();
 #endif // _DEBUG
 
 		if (size() != list.size())
@@ -433,6 +427,10 @@ namespace My
 	template<typename UserType>
 	void Vector<UserType>::reserve(std::size_t new_capacity)
 	{
+#ifdef _DEBUG
+		std::cout << "My::Vector reserve()" << std::endl;
+#endif // _DEBUG
+
 		if (new_capacity > capacity())
 		{
 			UserType* new_memory_ptr = static_cast<UserType*>(operator new(sizeof(UserType) * new_capacity));
@@ -464,6 +462,10 @@ namespace My
 	template<typename UserType>
 	void Vector<UserType>::shrink_to_fit()
 	{
+#ifdef _DEBUG
+		std::cout << "My::Vector shrink_to_fit()" << std::endl;
+#endif // _DEBUG
+
 		if (capacity() > size())
 		{
 			std::size_t current_size = size();
@@ -497,6 +499,10 @@ namespace My
 	template<typename UserType>
 	void Vector<UserType>::push_back(const UserType& value)
 	{
+#ifdef _DEBUG
+		std::cout << "My::Vector push_back()" << std::endl;
+#endif // _DEBUG
+
 		if ((capacity() - size()) == 0)
 		{
 			std::size_t current_size = size();
@@ -538,8 +544,12 @@ namespace My
 	}
 
 	template<typename UserType>
-	inline void Vector<UserType>::pop_back()
+	void Vector<UserType>::pop_back()
 	{
+#ifdef _DEBUG
+		std::cout << "My::Vector pop_back()" << std::endl;
+#endif // _DEBUG
+
 		if (_first)
 		{
 			(_first + (size() - 1))->~UserType();
@@ -548,8 +558,12 @@ namespace My
 	}
 
 	template<typename UserType>
-	inline void Vector<UserType>::clear()
+	void Vector<UserType>::clear()
 	{
+#ifdef _DEBUG
+		std::cout << "My::Vector clear()" << std::endl;
+#endif // _DEBUG
+
 		if (_first)
 		{
 			for (std::size_t i = 0; i < size(); i++)
@@ -563,6 +577,10 @@ namespace My
 	template<typename UserType>
 	void Vector<UserType>::resize(std::size_t count)
 	{
+#ifdef _DEBUG
+		std::cout << "My::Vector resize(count)" << std::endl;
+#endif // _DEBUG
+
 		std::size_t current_size = size();
 
 		if (count > current_size)
@@ -613,6 +631,10 @@ namespace My
 	template<typename UserType>
 	void Vector<UserType>::resize(std::size_t count, const UserType& value)
 	{
+#ifdef _DEBUG
+		std::cout << "My::Vector resize(count, value)" << std::endl;
+#endif // _DEBUG
+
 		std::size_t current_size = size();
 
 		if (count > current_size)
@@ -685,22 +707,18 @@ namespace My
 	{
 		os << std::boolalpha;
 
-		//print_dividing_line();
-
-		os << "Data stored in My::Vector: ";
+		os << "Data stored in My::Vector:" << std::endl;
 
 		for (std::size_t i = 0; i < vec.size(); i++)
 		{
-			os << vec[i] << " ";
+			os << "\t\t" << vec[i] << std::endl;
 		}
 		
-		os << std::endl;
-
 		os << "Empty is:\t"    << vec.empty()    << std::endl;
 		os << "Size is:\t"     << vec.size()     << std::endl;
 		os << "Capacity is:\t" << vec.capacity() << std::endl;
 
-		//print_dividing_line();
+		print_dividing_line();
 
 		return os;
 	}
