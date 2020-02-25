@@ -78,6 +78,7 @@ namespace My
 
 	template<typename UserType>
 	Vector<UserType>::Vector(std::size_t size)
+		: _first(nullptr), _last(nullptr), _capacity_last(nullptr)
 	{
 #ifdef _DEBUG
 		std::cout << "(+) My::Vector (size) constructor" << std::endl;
@@ -85,17 +86,35 @@ namespace My
 		print_dividing_line();
 #endif // _DEBUG
 
-		_first = static_cast<UserType*>(operator new(sizeof(UserType) * size));
-		
-		if (_first)
+		try
 		{
+			_first = static_cast<UserType*>(operator new(sizeof(UserType) * size));
+
 			for (std::size_t i = 0; i < size; i++)
 			{
-				new(static_cast<void*>(_first + i)) UserType();
+				try
+				{
+					new(static_cast<void*>(_first + i)) UserType();
+				}
+				catch (...)
+				{
+					for (std::size_t j = 0; j < i; j++) // when j == i ???
+					{
+						(_first + i)->~UserType();
+					}
+					operator delete(static_cast<void*>(_first));
+
+					throw;
+				}
 			}
-		
+
 			_last          = _first + size;
 			_capacity_last = _first + size;
+		}
+		catch (std::bad_alloc& e)
+		{
+			std::cerr << "My::Vector: " << e.what() << std::endl;
+			throw;
 		}
 	}
 
@@ -108,17 +127,25 @@ namespace My
 		print_dividing_line();
 #endif // _DEBUG
 
-		_first = static_cast<UserType*>(operator new(sizeof(UserType) * size));
-		
-		if (_first)
+		try
 		{
+			_first = static_cast<UserType*>(operator new(sizeof(UserType) * size));
+
 			for (std::size_t i = 0; i < size; i++)
 			{
 				new(static_cast<void*>(_first + i)) UserType(value);
 			}
-			
+
 			_last          = _first + size;
 			_capacity_last = _first + size;
+		}
+		catch (std::bad_alloc& ex)
+		{
+			std::cerr << "std::bad_alloc - " << ex.what() << std::endl;
+
+			_first         = nullptr;
+			_last          = nullptr;
+			_capacity_last = nullptr;
 		}
 	}
 
@@ -131,17 +158,25 @@ namespace My
 		print_dividing_line();
 #endif // _DEBUG
 
-		_first = static_cast<UserType*>(operator new(sizeof(UserType) * list.size()));
-		
-		if (_first)
+		try
 		{
+			_first = static_cast<UserType*>(operator new(sizeof(UserType) * list.size()));
+
 			for (std::size_t i = 0; i < list.size(); i++)
 			{
 				new(static_cast<void*>(_first + i)) UserType(*(list.begin() + i));
 			}
-	
+
 			_last          = _first + list.size();
 			_capacity_last = _first + list.size();
+		}
+		catch (std::bad_alloc& ex)
+		{
+			std::cerr << "std::bad_alloc - " << ex.what() << std::endl;
+
+			_first         = nullptr;
+			_last          = nullptr;
+			_capacity_last = nullptr;
 		}
 	}
 
@@ -156,17 +191,25 @@ namespace My
 
 		if (this != &other)
 		{
-			_first = static_cast<UserType*>(operator new(sizeof(UserType) * other.size()));
-			
-			if (_first)
+			try
 			{
+				_first = static_cast<UserType*>(operator new(sizeof(UserType) * other.size()));
+
 				for (std::size_t i = 0; i < other.size(); i++)
 				{
 					new(static_cast<void*>(_first + i)) UserType(*(other.data() + i));
 				}
-			
+
 				_last          = _first + other.size();
 				_capacity_last = _first + other.size();
+			}
+			catch (std::bad_alloc& ex)
+			{
+				std::cerr << "std::bad_alloc - " << ex.what() << std::endl;
+
+				_first         = nullptr;
+				_last          = nullptr;
+				_capacity_last = nullptr;
 			}
 		}
 	}
@@ -186,9 +229,8 @@ namespace My
 			{
 				(_first + i)->~UserType();
 			}
-
-			operator delete(static_cast<void*>(_first));
 		}
+		operator delete(static_cast<void*>(_first));
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -324,7 +366,7 @@ namespace My
 	template<typename UserType>
 	UserType& Vector<UserType>::at(std::size_t pos)
 	{
-		if (_first && size() > pos)
+		if ((_first && size()) > pos)
 		{
 			return *(_first + pos);
 		}

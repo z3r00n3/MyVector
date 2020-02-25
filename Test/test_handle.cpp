@@ -12,7 +12,8 @@ TestType::TestType()
 #endif // _DEBUG
 }
 
-TestType::TestType(std::initializer_list<int> list, std::string str)
+TestType::TestType(std::initializer_list<int> list, const std::string& str)
+	: _arr(nullptr), _arr_size(0), _str("")
 {
 #ifdef _DEBUG
 	std::cout << "(+) TestType (std::initializer_list<int>, std::string) constructor" << std::endl;
@@ -30,19 +31,17 @@ TestType::TestType(std::initializer_list<int> list, std::string str)
 		}
 
 		_arr_size = list.size();
+		_str      = str;
 	}
-	catch (std::bad_alloc& ex)
+	catch (std::bad_alloc& e)
 	{
-		std::cerr << "std::bad_alloc - " << ex.what() << std::endl;
-
-		_arr = nullptr;
-		_arr_size = 0;
+		std::cerr << "TestType: " << e.what() << std::endl;
+		throw;
 	}
-
-	_str = str;
 }
 
 TestType::TestType(const TestType& other)
+	: _arr(nullptr), _arr_size(0), _str("")
 {
 #ifdef _DEBUG
 	std::cout << "(+) TestType copy constructor" << std::endl;
@@ -64,13 +63,10 @@ TestType::TestType(const TestType& other)
 			_arr_size = other._arr_size;
 			_str      = other._str;
 		}
-		catch (std::bad_alloc& ex)
+		catch (std::bad_alloc& e)
 		{
-			std::cerr << "std::bad_alloc - " << ex.what() << std::endl;
-
-			_arr      = nullptr;
-			_arr_size = 0;
-			_str      = "";
+			std::cerr << "TestType: " << e.what() << std::endl;
+			throw;
 		}
 	}
 }

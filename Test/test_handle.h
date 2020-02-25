@@ -6,7 +6,7 @@ class TestType
 {
 public:
 	TestType();
-	TestType(std::initializer_list<int> list, std::string str);
+	TestType(std::initializer_list<int> list, const std::string& str);
 	TestType(const TestType& other);
 	~TestType();
 
