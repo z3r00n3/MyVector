@@ -53,9 +53,9 @@ namespace My
 		template<typename UserType> friend std::ostream& operator<<(std::ostream& os, const Vector<UserType>& vec);
 
 	private:
-		UserType*       _first;
-		UserType*       _last;
-		UserType*       _capacity_last;
+		UserType*   _first;
+		UserType*   _last;
+		UserType*   _capacity_last;
 		const float _capacity_multiplier = 1.5f;
 		
 		// Member functions
@@ -89,37 +89,38 @@ namespace My
 		try
 		{
 			_first = static_cast<UserType*>(operator new(sizeof(UserType) * size));
-
-			for (std::size_t i = 0; i < size; i++)
-			{
-				try
-				{
-					new(static_cast<void*>(_first + i)) UserType();
-				}
-				catch (...)
-				{
-					for (std::size_t j = 0; j < i; j++) // when j == i ???
-					{
-						(_first + i)->~UserType();
-					}
-					operator delete(static_cast<void*>(_first));
-
-					throw;
-				}
-			}
-
-			_last          = _first + size;
-			_capacity_last = _first + size;
 		}
 		catch (std::bad_alloc& e)
 		{
 			std::cerr << "My::Vector: " << e.what() << std::endl;
 			throw;
 		}
+
+		for (std::size_t i = 0; i < size; i++)
+		{
+			try
+			{
+				new(static_cast<void*>(_first + i)) UserType();
+			}
+			catch (...)
+			{
+				for (std::size_t j = 0; j < i; j++)
+				{
+					(_first + i)->~UserType();
+				}
+				operator delete(static_cast<void*>(_first));
+
+				throw;
+			}
+		}
+
+		_last          = _first + size;
+		_capacity_last = _first + size;
 	}
 
 	template<typename UserType>
 	Vector<UserType>::Vector(std::size_t size, const UserType& value)
+		: _first(nullptr), _last(nullptr), _capacity_last(nullptr)
 	{
 #ifdef _DEBUG
 		std::cout << "(+) My::Vector (size, value) constructor" << std::endl;
@@ -130,27 +131,38 @@ namespace My
 		try
 		{
 			_first = static_cast<UserType*>(operator new(sizeof(UserType) * size));
+		}
+		catch (std::bad_alloc& e)
+		{
+			std::cerr << "My::Vector: " << e.what() << std::endl;
+			throw;
+		}
 
-			for (std::size_t i = 0; i < size; i++)
+		for (std::size_t i = 0; i < size; i++)
+		{
+			try
 			{
 				new(static_cast<void*>(_first + i)) UserType(value);
 			}
+			catch (...)
+			{
+				for (std::size_t j = 0; j < i; j++)
+				{
+					(_first + i)->UserType();
+				}
+				operator delete(static_cast<void*>(_first));
 
-			_last          = _first + size;
-			_capacity_last = _first + size;
+				throw;
+			}
 		}
-		catch (std::bad_alloc& ex)
-		{
-			std::cerr << "std::bad_alloc - " << ex.what() << std::endl;
 
-			_first         = nullptr;
-			_last          = nullptr;
-			_capacity_last = nullptr;
-		}
+		_last          = _first + size;
+		_capacity_last = _first + size;
 	}
 
 	template<typename UserType>
 	Vector<UserType>::Vector(std::initializer_list<UserType> list)
+		: _first(nullptr), _last(nullptr), _capacity_last(nullptr)
 	{
 #ifdef _DEBUG
 		std::cout << "(+) My::Vector (initialiser_list) constructor" << std::endl;
@@ -161,22 +173,29 @@ namespace My
 		try
 		{
 			_first = static_cast<UserType*>(operator new(sizeof(UserType) * list.size()));
+		}
+		catch (std::bad_alloc& e)
+		{
+			std::cerr << "My::Vector: " << e.what() << std::endl;
+			throw;
+		}
 
-			for (std::size_t i = 0; i < list.size(); i++)
+		for (std::size_t i = 0; i < list.size(); i++)
+		{
+			try
 			{
 				new(static_cast<void*>(_first + i)) UserType(*(list.begin() + i));
 			}
+			catch (...)
+			{
+				for (std::size_t j = 0; j < i; j++)
+				{
+					(_first + i)->~UserType();
+				}
+				operator delete(static_cast<void*>(_first));
 
-			_last          = _first + list.size();
-			_capacity_last = _first + list.size();
-		}
-		catch (std::bad_alloc& ex)
-		{
-			std::cerr << "std::bad_alloc - " << ex.what() << std::endl;
-
-			_first         = nullptr;
-			_last          = nullptr;
-			_capacity_last = nullptr;
+				throw;
+			}
 		}
 	}
 
@@ -230,6 +249,7 @@ namespace My
 				(_first + i)->~UserType();
 			}
 		}
+
 		operator delete(static_cast<void*>(_first));
 	}
 
@@ -366,27 +386,23 @@ namespace My
 	template<typename UserType>
 	UserType& Vector<UserType>::at(std::size_t pos)
 	{
-		if ((_first && size()) > pos)
-		{
-			return *(_first + pos);
-		}
-		else
+		if (pos >= size())
 		{
 			throw std::out_of_range("My::Vector Out Of Range Exception");
 		}
+
+		return *(_first + pos);
 	}
 
 	template<typename UserType>
 	const UserType& Vector<UserType>::at(std::size_t pos) const
 	{
-		if (_first && size() > pos)
-		{
-			return *(_first + pos);
-		}
-		else
+		if (pos >= size())
 		{
 			throw std::out_of_range("My::Vector Out Of Range Exception");
 		}
+
+		return *(_first + pos);
 	}
 
 	template<typename UserType>
@@ -442,16 +458,16 @@ namespace My
 	///////////////////////////////////////////////////////////////////////////////
 
 	template<typename UserType>
-	inline bool Vector<UserType>::empty() const
+	bool Vector<UserType>::empty() const
 	{
+		bool is_empty = false;
+
 		if (_first == _last)
 		{
-			return true;
+			is_empty = true;
 		}
-		else
-		{
-			return false;
-		}
+
+		return is_empty;
 	}
 
 	template<typename UserType>
@@ -592,9 +608,9 @@ namespace My
 		std::cout << "My::Vector pop_back()" << std::endl;
 #endif // _DEBUG
 
-		if (_first)
+		if (!empty())
 		{
-			(_first + (size() - 1))->~UserType();
+			back().~UserType();
 			_last--;
 		}
 	}
@@ -606,12 +622,13 @@ namespace My
 		std::cout << "My::Vector clear()" << std::endl;
 #endif // _DEBUG
 
-		if (_first)
+		if (!empty())
 		{
 			for (std::size_t i = 0; i < size(); i++)
 			{
 				(_first + i)->~UserType();
 			}
+
 			_last = _first;
 		}
 	}

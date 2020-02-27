@@ -4,38 +4,21 @@
 #include <iostream>
 #include <vector>
 
-void throw_ex()
-{
-	throw std::bad_alloc();
-}
-
 int main()
 {
-	//try
-	//{
-	//	//throw_ex();
-	//	throw std::bad_alloc();
-	//}
-	//catch (std::bad_alloc& ex)
-	//{
-	//	std::cerr << "std::bad_alloc - " << ex.what() << std::endl;
-	//	throw;
-	//}
+	int* p;
 
-	for (std::size_t i = 0; i < 10; i++)
-	{
-		try
-		{
-			if (i == 5)
-			{
-				throw 1;
-			}
-		}
-		catch (...)
-		{
-			std::cerr << i << std::endl;
-		}
-	}
+	p = new int[10];
+
+	std::cout << p << std::endl;
+
+	delete[] p;
+
+	std::cout << p << std::endl;
+
+	p = nullptr;
+
+	std::cout << p << std::endl;
 
 	//My::Vector<TestType> v1;
 	//My::Vector<TestType> v2(3);
