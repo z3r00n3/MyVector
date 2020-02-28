@@ -85,7 +85,7 @@ TestType::~TestType()
 TestType& TestType::operator=(const TestType& other)
 {
 #ifdef _DEBUG
-	std::cout << "(~) TestType operator=" << std::endl;
+	std::cout << "(=) TestType operator=" << std::endl;
 	std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
 	print_dividing_line();
 #endif // _DEBUG
@@ -109,9 +109,10 @@ TestType& TestType::operator=(const TestType& other)
 				_arr_size = other._arr_size;
 				_str      = other._str;
 			}
-			catch (std::bad_alloc& ex)
+			catch (std::bad_alloc& e)
 			{
-				std::cerr << "std::bad_alloc - " << ex.what() << std::endl;
+				std::cerr << "TestType: " << e.what() << std::endl;
+				throw;
 			}
 		}
 		if (_arr_size == other._arr_size)

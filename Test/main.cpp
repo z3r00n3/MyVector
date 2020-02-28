@@ -15,10 +15,5 @@ int main()
 	std::cout << test2 << std::endl;
 	std::cout << test3 << std::endl;
 
-	//unsigned char* p = (unsigned char *)&test1;
-	//p += sizeof(int*);
-	//p += sizeof(size_t);
-	//*((std::string*)p) = "world";
-
 	return 0;
 }
