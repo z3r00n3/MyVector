@@ -1,6 +1,6 @@
 #pragma once
 
-#include "test_handle.h"
+#include "../Test/test_handle.h"
 
 #include <iostream>
 
@@ -51,6 +51,7 @@ namespace My
 	
 		// Friend functions
 		template<typename UserType> friend std::ostream& operator<<(std::ostream& os, const Vector<UserType>& vec);
+		template<typename UserType> friend bool          operator==(const Vector<UserType>& lhs, const Vector<UserType>& rhs);
 
 	private:
 		UserType*   _first;
@@ -519,7 +520,7 @@ namespace My
 	{
 		bool is_empty = false;
 
-		if (_first == _last)
+		if (_last == _first)
 		{
 			is_empty = true;
 		}
@@ -936,9 +937,29 @@ namespace My
 		return os;
 	}
 
+	template<typename UserType>
+	bool operator==(const Vector<UserType>& lhs, const Vector<UserType>& rhs)
+	{
+		if (lhs.size() != rhs.size())
+		{
+			return false;
+		}
+
+		for (std::size_t i = 0; i < lhs.size(); i++)
+		{
+			if (lhs[i] != rhs[i])
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	///////////////////////////////////////////////////////////////////////////////
 	//                        PRIVATE MEMBER FUNCTIONS                           //
 	///////////////////////////////////////////////////////////////////////////////
 
-	
+
+
 }

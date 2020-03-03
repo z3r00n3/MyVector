@@ -13,6 +13,8 @@ public:
 	TestType& operator=(const TestType& other);
 
 	friend std::ostream& operator<<(std::ostream& stream, const TestType& obj);
+	friend bool operator==(const TestType& lhs, const TestType& rhs);
+	friend bool operator!=(const TestType& lhs, const TestType& rhs);
 
 private:
 	int*        _arr;

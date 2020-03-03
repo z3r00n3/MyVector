@@ -158,6 +158,52 @@ std::ostream& operator<<(std::ostream& stream, const TestType& obj)
 	return stream;
 }
 
+bool operator==(const TestType& lhs, const TestType& rhs)
+{
+	if (lhs._arr_size != rhs._arr_size)
+	{
+		return false;
+	}
+
+	for (std::size_t i = 0; i < lhs._arr_size; i++)
+	{
+		if (*(lhs._arr + i) != *(rhs._arr + i))
+		{
+			return false;
+		}
+	}
+
+	if (lhs._str != rhs._str)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool operator!=(const TestType & lhs, const TestType & rhs)
+{
+	if (lhs._arr_size != rhs._arr_size)
+	{
+		return true;
+	}
+
+	for (std::size_t i = 0; i < lhs._arr_size; i++)
+	{
+		if (*(lhs._arr + i) != *(rhs._arr + i))
+		{
+			return true;
+		}
+	}
+
+	if (lhs._str != rhs._str)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void print_dividing_line()
 {
 	for (std::size_t i = 0; i < 80; i++)
