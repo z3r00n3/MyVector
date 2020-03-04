@@ -367,7 +367,7 @@ namespace My
 		{
 			std::size_t new_capacity = 0;
 			
-			if (list.size() > capacity())
+			if (capacity() < list.size())
 			{
 				new_capacity = list.size();
 			}
@@ -547,7 +547,7 @@ namespace My
 		std::cout << "My::Vector reserve()" << std::endl;
 #endif // _DEBUG
 
-		if (new_capacity > capacity())
+		if (capacity() < new_capacity)
 		{
 			UserType* new_memory_ptr = nullptr;
 
@@ -650,7 +650,7 @@ namespace My
 		std::cout << "My::Vector push_back()" << std::endl;
 #endif // _DEBUG
 
-		if ((capacity() - size()) == 0)
+		if (capacity() == size())
 		{
 			std::size_t current_size = size();
 			std::size_t new_capacity = 0;
@@ -752,9 +752,9 @@ namespace My
 
 		std::size_t current_size = size();
 
-		if (count > current_size)
+		if (current_size < count)
 		{
-			if (count > capacity())
+			if (capacity() < count)
 			{
 				UserType* new_memory_ptr = nullptr;
 
@@ -809,7 +809,7 @@ namespace My
 
 		}
 
-		if (count < current_size)
+		if (current_size > count)
 		{
 			for (std::size_t i = count; i < current_size; i++)
 			{
@@ -829,9 +829,9 @@ namespace My
 
 		std::size_t current_size = size();
 
-		if (count > current_size)
+		if (current_size < count)
 		{
-			if (count > capacity())
+			if (capacity() < count)
 			{
 				UserType* new_memory_ptr = nullptr;
 
@@ -885,7 +885,7 @@ namespace My
 			}
 		}
 
-		if (count < current_size)
+		if (current_size > count)
 		{
 			for (std::size_t i = count; i < current_size; i++)
 			{
