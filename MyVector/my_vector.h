@@ -789,11 +789,11 @@ namespace My
 				}
 				operator delete(static_cast<void*>(_first));
 
-				_first = new_memory_ptr;
+				_first         = new_memory_ptr;
+			    _capacity_last = _first + count;
 			}
 
-			_last          = _first + count;
-			_capacity_last = _first + count;
+			_last = _first + count;
 
 			for (std::size_t i = current_size; i < count; i++)
 			{
@@ -806,7 +806,6 @@ namespace My
 					throw;
 				}
 			}
-
 		}
 
 		if (current_size > count)
@@ -866,11 +865,11 @@ namespace My
 				}
 				operator delete(static_cast<void*>(_first));
 
-				_first = new_memory_ptr;
+				_first         = new_memory_ptr;
+				_capacity_last = _first + count;
 			}
 
 			_last = _first + count;
-			_capacity_last = _first + count;
 
 			for (std::size_t i = current_size; i < count; i++)
 			{

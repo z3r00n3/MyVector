@@ -1,10 +1,21 @@
 *******************************************************************************
 
+v 0.24a
+
+UnitTest:
++ Доработки в уже реализованных тестах
++ Реализованы тесты для resize(count), resize(count, value) и swap()
+
+My::Vector:
++ Исправления в resize(count) и в resize(count, value) на основе юнит-тестов
+
+*******************************************************************************
+
 v 0.23a
 
 UnitTest:
 + Подправлены тесты для конструкторов, operator=(& other) и operator==()
-+ Добавлены тесты для operator=(initializer_list), empty(), reserve(),
++ Реализованы тесты для operator=(initializer_list), empty(), reserve(),
 shrink_to_fit(), push_back(), pop_back(), clear()
 
 
@@ -14,13 +25,13 @@ v 0.22a
 
 UnitTest:
 + Добавлен проект для проведения юнит-тестирования My::Vector
-+ Добавлены тесты для конструкторов, operator=(& other) и operator==()
++ Реализованы тесты для конструкторов, operator=(& other) и operator==()
 
 My::Vector:
-+ Добавлен operator==()
++ Реализован operator==()
 
 TestType:
-+ Добавлены operator==(), operator!=()
++ Реализованы operator==(), operator!=()
 
 *******************************************************************************
 
