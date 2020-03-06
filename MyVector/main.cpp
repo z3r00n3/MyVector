@@ -4,16 +4,21 @@
 #include <iostream>
 #include <vector>
 
+void foo(My::Vector<TestType> v)
+{
+	//std::cin.get();
+}
+
 int main()
 {
-	//My::Vector<TestType> v1;
-	//My::Vector<TestType> v2(3);
+	My::Vector<TestType> v1(3);
+	//My::Vector<TestType> v2 = v1;
 	//My::Vector<TestType> v3(3, TestType({ 1, 2, 3 }, "hello"));
 	//My::Vector<TestType> v4{ TestType({ 1, 2, 3 }, "hello"), TestType({ 4, 5, 6 }, "world") };
 	//My::Vector<TestType> v5 = v4;
 	//My::Vector<TestType> v6;
 	//My::Vector<TestType> v7;
-
+	foo(std::move(My::Vector<TestType>()));
 	//v6 = v5;
 	//v7 = { TestType({ 1, 2, 3 }, "hello"), TestType({ 4, 5, 6 }, "world"), TestType({ 7, 8, 9 }, "the world is mine") };
 

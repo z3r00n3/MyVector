@@ -227,7 +227,7 @@ namespace UnitTest
 			Assert::AreEqual(expected_capacity, this_vector.capacity());
 		}
 
-		TEST_METHOD(assign_operator_other___this_size_less_other_and_this_cap_less_other)
+		TEST_METHOD(copy_assignment_operator_other___this_size_less_other_and_this_cap_less_other)
 		{
 			// arrange
 			My::Vector<TestType> this_vector;
@@ -242,7 +242,7 @@ namespace UnitTest
 			Assert::AreEqual(expected_capacity, this_vector.capacity());
 		}
 
-		TEST_METHOD(assign_operator_other___this_size_less_other_and_this_cap_more_other)
+		TEST_METHOD(copy_assignment_operator_other___this_size_less_other_and_this_cap_more_other)
 		{
 			// arrange
 			My::Vector<TestType> this_vector;
@@ -260,7 +260,7 @@ namespace UnitTest
 			Assert::AreEqual(expected_capacity, this_vector.capacity());
 		}
 
-		TEST_METHOD(assign_operator_other___this_size_less_other_and_this_cap_equal_other)
+		TEST_METHOD(copy_assignment_operator_other___this_size_less_other_and_this_cap_equal_other)
 		{
 			// arrange
 			My::Vector<TestType> this_vector;
@@ -278,7 +278,7 @@ namespace UnitTest
 			Assert::AreEqual(expected_capacity, this_vector.capacity());
 		}
 
-		TEST_METHOD(assign_operator_other___this_size_more_other_and_this_cap_less_other)
+		TEST_METHOD(copy_assignment_operator_other___this_size_more_other_and_this_cap_less_other)
 		{
 			// arrange
 			My::Vector<TestType> this_vector(3);
@@ -295,7 +295,7 @@ namespace UnitTest
 			Assert::AreEqual(expected_capacity, this_vector.capacity());
 		}
 
-		TEST_METHOD(assign_operator_other___this_size_more_other_and_this_cap_more_other)
+		TEST_METHOD(copy_assignment_operator_other___this_size_more_other_and_this_cap_more_other)
 		{
 			// arrange
 			My::Vector<TestType> this_vector(3);
@@ -310,7 +310,7 @@ namespace UnitTest
 			Assert::AreEqual(expected_capacity, this_vector.capacity());
 		}
 
-		TEST_METHOD(assign_operator_other___this_size_more_other_and_this_cap_equal_other)
+		TEST_METHOD(copy_assignment_operator_other___this_size_more_other_and_this_cap_equal_other)
 		{
 			// arrange
 			My::Vector<TestType> this_vector(3);
@@ -327,7 +327,7 @@ namespace UnitTest
 			Assert::AreEqual(expected_capacity, this_vector.capacity());
 		}
 
-		TEST_METHOD(assign_operator_other___this_size_equal_other_and_this_cap_less_other)
+		TEST_METHOD(copy_assignment_operator_other___this_size_equal_other_and_this_cap_less_other)
 		{
 			// arrange
 			My::Vector<TestType> this_vector(3);
@@ -344,7 +344,7 @@ namespace UnitTest
 			Assert::AreEqual(expected_capacity, this_vector.capacity());
 		}
 
-		TEST_METHOD(assign_operator_other___this_size_equal_other_and_this_cap_more_other)
+		TEST_METHOD(copy_assignment_operator_other___this_size_equal_other_and_this_cap_more_other)
 		{
 			// arrange
 			My::Vector<TestType> this_vector(3);
@@ -362,7 +362,7 @@ namespace UnitTest
 			Assert::AreEqual(expected_capacity, this_vector.capacity());
 		}
 
-		TEST_METHOD(assign_operator_other___this_size_equal_other_and_this_cap_equal_other)
+		TEST_METHOD(copy_assignment_operator_other___this_size_equal_other_and_this_cap_equal_other)
 		{
 			// arrange
 			My::Vector<TestType> this_vector(3);
@@ -377,7 +377,7 @@ namespace UnitTest
 			Assert::AreEqual(expected_capacity, this_vector.capacity());
 		}
 
-		TEST_METHOD(assign_operator_other___different_sizes_and_this_size_is_0)
+		TEST_METHOD(copy_assignment_operator_other___different_sizes_and_this_size_is_0)
 		{
 			// arrange
 			My::Vector<TestType> this_vector;
@@ -390,7 +390,7 @@ namespace UnitTest
 			Assert::AreEqual(other, this_vector);
 		}
 
-		TEST_METHOD(assign_operator_other___different_sizes_and_this_size_is_1)
+		TEST_METHOD(copy_assignment_operator_other___different_sizes_and_this_size_is_1)
 		{
 			// arrange
 			My::Vector<TestType> this_vector(1);
@@ -403,7 +403,7 @@ namespace UnitTest
 			Assert::AreEqual(other, this_vector);
 		}
 
-		TEST_METHOD(assign_operator_other___different_sizes_and_this_size_is_2)
+		TEST_METHOD(copy_assignment_operator_other___different_sizes_and_this_size_is_2)
 		{
 			// arrange
 			My::Vector<TestType> this_vector(2);
@@ -416,7 +416,7 @@ namespace UnitTest
 			Assert::AreEqual(other, this_vector);
 		}
 
-		TEST_METHOD(assign_operator_other___different_sizes_and_other_size_is_0)
+		TEST_METHOD(copy_assignment_operator_other___different_sizes_and_other_size_is_0)
 		{
 			// arrange
 			My::Vector<TestType> this_vector(3);
@@ -429,7 +429,7 @@ namespace UnitTest
 			Assert::AreEqual(other, this_vector);
 		}
 
-		TEST_METHOD(assign_operator_other___different_sizes_and_other_size_is_1)
+		TEST_METHOD(copy_assignment_operator_other___different_sizes_and_other_size_is_1)
 		{
 			// arrange
 			My::Vector<TestType> this_vector(3);
@@ -442,7 +442,7 @@ namespace UnitTest
 			Assert::AreEqual(other, this_vector);
 		}
 
-		TEST_METHOD(assign_operator_other___different_sizes_and_other_size_is_2)
+		TEST_METHOD(copy_assignment_operator_other___different_sizes_and_other_size_is_2)
 		{
 			// arrange
 			My::Vector<TestType> this_vector(3);
@@ -455,7 +455,7 @@ namespace UnitTest
 			Assert::AreEqual(other, this_vector);
 		}
 
-		TEST_METHOD(assign_operator_other___same_sizes_are_0)
+		TEST_METHOD(copy_assignment_operator_other___same_sizes_are_0)
 		{
 			// arrange
 			My::Vector<TestType> this_vector;
@@ -468,7 +468,7 @@ namespace UnitTest
 			Assert::AreEqual(other, this_vector);
 		}
 
-		TEST_METHOD(assign_operator_other___same_sizes_are_1)
+		TEST_METHOD(copy_assignment_operator_other___same_sizes_are_1)
 		{
 			// arrange
 			My::Vector<TestType> this_vector(1);
@@ -481,7 +481,7 @@ namespace UnitTest
 			Assert::AreEqual(other, this_vector);
 		}
 
-		TEST_METHOD(assign_operator_other___same_sizes_are_2)
+		TEST_METHOD(copy_assignment_operator_other___same_sizes_are_2)
 		{
 			// arrange
 			My::Vector<TestType> this_vector(2);
@@ -494,7 +494,7 @@ namespace UnitTest
 			Assert::AreEqual(other, this_vector);
 		}
 
-		TEST_METHOD(assign_operator_init_list___cap_less_list_size)
+		TEST_METHOD(copy_assignment_operator_init_list___cap_less_list_size)
 		{
 			// arrange
 			TestType list_elem({ 1, 2, 3 }, "hello");
@@ -509,7 +509,7 @@ namespace UnitTest
 			Assert::AreEqual(expected_capacity, v.capacity());
 		}
 
-		TEST_METHOD(assign_operator_init_list___cap_equal_list_size)
+		TEST_METHOD(copy_assignment_operator_init_list___cap_equal_list_size)
 		{
 			// arrange
 			TestType list_elem({ 1, 2, 3 }, "hello");
@@ -524,7 +524,7 @@ namespace UnitTest
 			Assert::AreEqual(expected_capacity, v.capacity());
 		}
 
-		TEST_METHOD(assign_operator_init_list___cap_more_list_size)
+		TEST_METHOD(copy_assignment_operator_init_list___cap_more_list_size)
 		{
 			// arrange
 			TestType list_elem({ 1, 2, 3 }, "hello");
@@ -539,7 +539,7 @@ namespace UnitTest
 			Assert::AreEqual(expected_capacity, v.capacity());
 		}
 
-		TEST_METHOD(assign_operator_init_list___different_sizes_and_this_size_is_0)
+		TEST_METHOD(copy_assignment_operator_init_list___different_sizes_and_this_size_is_0)
 		{
 			// arrange
 			TestType list_elem({ 1, 2, 3 }, "hello");
@@ -552,7 +552,7 @@ namespace UnitTest
 			Assert::AreEqual({ list_elem, list_elem, list_elem }, v);
 		}
 
-		TEST_METHOD(assign_operator_init_list___different_sizes_and_this_size_is_1)
+		TEST_METHOD(copy_assignment_operator_init_list___different_sizes_and_this_size_is_1)
 		{
 			// arrange
 			TestType list_elem({ 1, 2, 3 }, "hello");
@@ -565,7 +565,7 @@ namespace UnitTest
 			Assert::AreEqual({ list_elem, list_elem, list_elem }, v);
 		}
 
-		TEST_METHOD(assign_operator_init_list___different_sizes_and_this_size_is_2)
+		TEST_METHOD(copy_assignment_operator_init_list___different_sizes_and_this_size_is_2)
 		{
 			// arrange
 			TestType list_elem({ 1, 2, 3 }, "hello");
@@ -578,7 +578,7 @@ namespace UnitTest
 			Assert::AreEqual({ list_elem, list_elem, list_elem }, v);
 		}
 		
-		TEST_METHOD(assign_operator_init_list___different_sizes_and_list_size_is_0)
+		TEST_METHOD(copy_assignment_operator_init_list___different_sizes_and_list_size_is_0)
 		{
 			// arrange
 			My::Vector<TestType> v(3);
@@ -590,7 +590,7 @@ namespace UnitTest
 			Assert::AreEqual({}, v);
 		}
 
-		TEST_METHOD(assign_operator_init_list___different_sizes_and_list_size_is_1)
+		TEST_METHOD(copy_assignment_operator_init_list___different_sizes_and_list_size_is_1)
 		{
 			// arrange
 			TestType list_elem({ 1, 2, 3 }, "hello");
@@ -603,7 +603,7 @@ namespace UnitTest
 			Assert::AreEqual({ list_elem }, v);
 		}
 
-		TEST_METHOD(assign_operator_init_list___different_sizes_and_list_size_is_2)
+		TEST_METHOD(copy_assignment_operator_init_list___different_sizes_and_list_size_is_2)
 		{
 			// arrange
 			TestType list_elem({ 1, 2, 3 }, "hello");
@@ -616,7 +616,7 @@ namespace UnitTest
 			Assert::AreEqual({ list_elem, list_elem }, v);
 		}
 
-		TEST_METHOD(assign_operator_init_list___same_sizes_are_0)
+		TEST_METHOD(copy_assignment_operator_init_list___same_sizes_are_0)
 		{
 			// arrange
 			My::Vector<TestType> v;
@@ -628,7 +628,7 @@ namespace UnitTest
 			Assert::AreEqual({}, v);
 		}
 
-		TEST_METHOD(assign_operator_init_list___same_sizes_are_1)
+		TEST_METHOD(copy_assignment_operator_init_list___same_sizes_are_1)
 		{
 			// arrange
 			TestType list_elem({ 1, 2, 3 }, "hello");
@@ -641,7 +641,7 @@ namespace UnitTest
 			Assert::AreEqual({ list_elem }, v);
 		}
 
-		TEST_METHOD(assign_operator_init_list___same_sizes_are_2)
+		TEST_METHOD(copy_assignment_operator_init_list___same_sizes_are_2)
 		{
 			// arrange
 			TestType list_elem({ 1, 2, 3 }, "hello");
@@ -1316,7 +1316,7 @@ namespace UnitTest
 		TEST_METHOD(swap)
 		{
 			// arrange
-			TestType this_value({ 1, 2, 3 }, "hello");
+			TestType this_value ({ 1, 2, 3 }, "hello");
 			TestType other_value({ 4, 5, 6 }, "world");
 			My::Vector<TestType> this_vector(3, this_value);
 			My::Vector<TestType> other(10, other_value);

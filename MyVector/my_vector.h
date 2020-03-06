@@ -16,10 +16,12 @@ namespace My
 		Vector(std::size_t size, const UserType& value);
 		Vector(std::initializer_list<UserType> list);
 		Vector(const Vector<UserType>& other);
+		Vector(Vector<UserType>&& other);
 		~Vector();
 		
 		// Member functions
 		Vector<UserType>& operator=(const Vector<UserType>& other);
+		Vector<UserType>& operator=(Vector<UserType>&& other);
 		Vector<UserType>& operator=(std::initializer_list<UserType> list);
 
 		// Element access
@@ -249,6 +251,25 @@ namespace My
 	}
 
 	template<typename UserType>
+	Vector<UserType>::Vector(Vector<UserType>&& other)
+		: _first(nullptr), _last(nullptr), _capacity_last(nullptr)
+	{
+#ifdef _DEBUG
+		std::cout << "(+) My::Vector move constructor" << std::endl;
+		std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
+		print_dividing_line();
+#endif // _DEBUG
+
+		_first         = other._first;
+		_last          = other._last;
+		_capacity_last = other._capacity_last;
+
+		other._first         = nullptr;
+		other._last          = nullptr;
+		other._capacity_last = nullptr;
+	}
+
+	template<typename UserType>
 	Vector<UserType>::~Vector()
 	{
 #ifdef _DEBUG
@@ -350,6 +371,26 @@ namespace My
 				}
 			}
 		}
+
+		return *this;
+	}
+
+	template<typename UserType>
+	Vector<UserType>& Vector<UserType>::operator=(Vector<UserType>&& other)
+	{
+#ifdef _DEBUG
+		std::cout << "(+) My::Vector move operator=(&& other)" << std::endl;
+		std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
+		print_dividing_line();
+#endif // _DEBUG
+
+		_first         = other._first;
+		_last          = other._last;
+		_capacity_last = other._capacity_last;
+
+		other._first         = nullptr;
+		other._last          = nullptr;
+		other._capacity_last = nullptr;
 
 		return *this;
 	}
