@@ -384,13 +384,22 @@ namespace My
 		print_dividing_line();
 #endif // _DEBUG
 
-		_first         = other._first;
-		_last          = other._last;
-		_capacity_last = other._capacity_last;
+		if (this != &other)
+		{
+			for (std::size_t i = 0; i < size(); i++)
+			{
+				(_first + i)->~UserType();
+			}
+			operator delete(static_cast<void*>(_first));
 
-		other._first         = nullptr;
-		other._last          = nullptr;
-		other._capacity_last = nullptr;
+			_first         = other._first;
+			_last          = other._last;
+			_capacity_last = other._capacity_last;
+
+			other._first         = nullptr;
+			other._last          = nullptr;
+			other._capacity_last = nullptr;
+		}
 
 		return *this;
 	}
