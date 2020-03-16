@@ -71,6 +71,27 @@ TestType::TestType(const TestType& other)
 	}
 }
 
+TestType::TestType(TestType&& other)
+	: _arr(nullptr), _arr_size(0), _str("")
+{
+#ifdef _DEBUG
+	std::cout << "(+) TestType move constructor" << std::endl;
+	std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
+	print_dividing_line();
+#endif // _DEBUG
+
+	if (this != &other)
+	{
+		_arr      = other._arr;
+		_arr_size = other._arr_size;
+		_str      = other._str;
+
+		other._arr      = nullptr;
+		other._arr_size = 0;
+		other._str      = "";
+	}
+}
+
 TestType::~TestType()
 {
 #ifdef _DEBUG
@@ -85,7 +106,7 @@ TestType::~TestType()
 TestType& TestType::operator=(const TestType& other)
 {
 #ifdef _DEBUG
-	std::cout << "(=) TestType operator=" << std::endl;
+	std::cout << "(=) TestType copy operator=(& other)" << std::endl;
 	std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
 	print_dividing_line();
 #endif // _DEBUG
@@ -134,6 +155,30 @@ TestType& TestType::operator=(const TestType& other)
 			_arr_size = other._arr_size;
 			_str      = other._str;
 		}
+	}
+
+	return *this;
+}
+
+TestType& TestType::operator=(TestType&& other)
+{
+#ifdef _DEBUG
+	std::cout << "(=) TestType move operator=(&& other)" << std::endl;
+	std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
+	print_dividing_line();
+#endif // _DEBUG
+
+	if (this != &other)
+	{
+		delete[] _arr;
+
+		_arr      = other._arr;
+		_arr_size = other._arr_size;
+		_str      = other._str;
+
+		other._arr      = nullptr;
+		other._arr_size = 0;
+		other._str      = "";
 	}
 
 	return *this;

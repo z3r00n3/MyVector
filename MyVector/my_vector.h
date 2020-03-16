@@ -45,6 +45,7 @@ namespace My
 
 		// Modifiers
 		void push_back(const UserType& value);
+		void pusk_back(UserType&& value); 
 		void pop_back();
 		void clear();
 		void resize(std::size_t count);
@@ -260,13 +261,16 @@ namespace My
 		print_dividing_line();
 #endif // _DEBUG
 
-		_first         = other._first;
-		_last          = other._last;
-		_capacity_last = other._capacity_last;
+		if (this != &other)
+		{
+			_first         = other._first;
+			_last          = other._last;
+			_capacity_last = other._capacity_last;
 
-		other._first         = nullptr;
-		other._last          = nullptr;
-		other._capacity_last = nullptr;
+			other._first         = nullptr;
+			other._last          = nullptr;
+			other._capacity_last = nullptr;
+		}
 	}
 
 	template<typename UserType>
@@ -293,7 +297,7 @@ namespace My
 	Vector<UserType>& Vector<UserType>::operator=(const Vector<UserType>& other)
 	{
 #ifdef _DEBUG
-		std::cout << "(=) My::Vector operator=(& other)" << std::endl;
+		std::cout << "(=) My::Vector copy operator=(& other)" << std::endl;
 		std::cout << "this: 0x" << this << "\tother: 0x" << &other << std::endl;
 		print_dividing_line();
 #endif // _DEBUG
@@ -697,7 +701,7 @@ namespace My
 	void Vector<UserType>::push_back(const UserType& value)
 	{
 #ifdef _DEBUG
-		std::cout << "My::Vector push_back()" << std::endl;
+		std::cout << "My::Vector push_back(const& value)" << std::endl;
 #endif // _DEBUG
 
 		if (capacity() == size())
@@ -722,7 +726,7 @@ namespace My
 			}
 			catch (std::bad_alloc& e)
 			{
-				std::cerr << "My::Vector push_back(): " << e.what() << std::endl;
+				std::cerr << "My::Vector push_back(const& value): " << e.what() << std::endl;
 				throw;
 			}
 			
@@ -755,6 +759,77 @@ namespace My
 		try
 		{
 			new(static_cast<void*>(_last)) UserType(value);
+		}
+		catch (...)
+		{
+			throw;
+		}
+
+		_last++;
+	}
+
+	template<typename UserType>
+	inline void Vector<UserType>::pusk_back(UserType&& value)
+	{
+#ifdef _DEBUG
+		std::cout << "My::Vector push_back(&& value)" << std::endl;
+#endif // _DEBUG
+
+		if (capacity() == size())
+		{
+			std::size_t current_size = size();
+			std::size_t new_capacity = 0;
+
+			if (current_size > 1)
+			{
+				new_capacity = static_cast<std::size_t>(current_size * _capacity_multiplier);
+			}
+			else
+			{
+				new_capacity = current_size + 1;
+			}
+
+			UserType* new_memory_ptr = nullptr;
+
+			try
+			{
+				new_memory_ptr = static_cast<UserType*>(operator new(sizeof(UserType) * new_capacity));
+			}
+			catch (std::bad_alloc& e)
+			{
+				std::cerr << "My::Vector push_back(&& value): " << e.what() << std::endl;
+				throw;
+			}
+
+			for (std::size_t i = 0; i < current_size; i++)
+			{
+				try
+				{
+					new(static_cast<void*>(new_memory_ptr + i)) UserType(*(_first + i));
+				}
+				catch (...)
+				{
+					for (std::size_t j = 0; j < i; j++)
+					{
+						(new_memory_ptr + j)->~UserType();
+					}
+					operator delete(static_cast<void*>(new_memory_ptr));
+
+					throw;
+				}
+
+				(_first + i)->~UserType();
+			}
+			operator delete(static_cast<void*>(_first));
+
+			_first = new_memory_ptr;
+			_last = _first + current_size;
+			_capacity_last = _first + new_capacity;
+		}
+
+		try
+		{
+			new(static_cast<void*>(_last)) UserType(std::move(value));
 		}
 		catch (...)
 		{

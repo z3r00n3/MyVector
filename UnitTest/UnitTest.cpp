@@ -838,7 +838,7 @@ namespace UnitTest
 			Assert::AreEqual(value,             v.back());
 		}
 		
-		TEST_METHOD(push_back___cap_equal_size_and_size_is_0)
+		TEST_METHOD(push_back_copy_value___cap_equal_size_and_size_is_0)
 		{
 			// arrange
 			TestType value({ 1, 2, 3 }, "hello");
@@ -856,7 +856,7 @@ namespace UnitTest
 			Assert::AreEqual(value,             v.back());
 		}
 
-		TEST_METHOD(push_back___cap_equal_size_and_size_is_1)
+		TEST_METHOD(push_back_copy_value___cap_equal_size_and_size_is_1)
 		{
 			// arrange
 			TestType value({ 1, 2, 3 }, "hello");
@@ -874,7 +874,7 @@ namespace UnitTest
 			Assert::AreEqual(value,             v.back());
 		}
 
-		TEST_METHOD(push_back___cap_equal_size_and_size_is_2)
+		TEST_METHOD(push_back_copy_value___cap_equal_size_and_size_is_2)
 		{
 			// arrange
 			TestType value({ 1, 2, 3 }, "hello");
@@ -892,7 +892,7 @@ namespace UnitTest
 			Assert::AreEqual(value,             v.back());
 		}
 
-		TEST_METHOD(push_back___cap_more_size)
+		TEST_METHOD(push_back_copy_value___cap_more_size)
 		{
 			// arrange
 			TestType value({ 1, 2, 3 }, "hello");
@@ -911,6 +911,77 @@ namespace UnitTest
 			Assert::AreEqual(expected_capacity, v.capacity());
 			Assert::AreEqual(TestType(),        v.front());
 			Assert::AreEqual(value,             v.back());
+		}
+
+		TEST_METHOD(push_back_move_value___cap_equal_size_and_size_is_0)
+		{
+			// arrange
+			My::Vector<TestType> v;
+			std::size_t expected_size     = v.size() + 1;
+			std::size_t expected_capacity = v.size() + 1;
+
+			// act
+			v.push_back(TestType({ 1, 2, 3 }, "hello"));
+
+			// assert
+			Assert::AreEqual(expected_size,                  v.size());
+			Assert::AreEqual(expected_capacity,              v.capacity());
+			Assert::AreEqual(TestType({ 1, 2, 3 }, "hello"), v.front());
+			Assert::AreEqual(TestType({ 1, 2, 3 }, "hello"), v.back());
+		}
+
+		TEST_METHOD(push_back_move_value___cap_equal_size_and_size_is_1)
+		{
+			// arrange
+			My::Vector<TestType> v(1);
+			std::size_t expected_size     = v.size() + 1;
+			std::size_t expected_capacity = v.size() + 1;
+
+			// act
+			v.push_back(TestType({ 1, 2, 3 }, "hello"));
+
+			// assert
+			Assert::AreEqual(expected_size,                  v.size());
+			Assert::AreEqual(expected_capacity,              v.capacity());
+			Assert::AreEqual(TestType(),                     v.front());
+			Assert::AreEqual(TestType({ 1, 2, 3 }, "hello"), v.back());
+		}
+
+		TEST_METHOD(push_back_move_value___cap_equal_size_and_size_is_2)
+		{
+			// arrange
+			My::Vector<TestType> v(2);
+			std::size_t expected_size     = v.size() + 1;
+			std::size_t expected_capacity = static_cast<std::size_t>(v.size() * 1.5f);
+
+			// act
+			v.push_back(TestType({ 1, 2, 3 }, "hello"));
+
+			// assert
+			Assert::AreEqual(expected_size,                  v.size());
+			Assert::AreEqual(expected_capacity,              v.capacity());
+			Assert::AreEqual(TestType(),                     v.front());
+			Assert::AreEqual(TestType({ 1, 2, 3 }, "hello"), v.back());
+		}
+
+		TEST_METHOD(push_back_move_value___cap_more_size)
+		{
+			// arrange
+			My::Vector<TestType> v(3);
+			std::size_t expected_size = v.size() + 1;
+
+			v.reserve(10);
+
+			std::size_t expected_capacity = v.capacity();
+
+			// act
+			v.push_back(TestType({ 1, 2, 3 }, "hello"));
+
+			// assert
+			Assert::AreEqual(expected_size,                  v.size());
+			Assert::AreEqual(expected_capacity,              v.capacity());
+			Assert::AreEqual(TestType(),                     v.front());
+			Assert::AreEqual(TestType({ 1, 2, 3 }, "hello"), v.back());
 		}
 
 		TEST_METHOD(pop_back)

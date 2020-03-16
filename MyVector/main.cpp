@@ -4,34 +4,16 @@
 #include <iostream>
 #include <vector>
 
-void foo(My::Vector<TestType>&& v)
-{
-	std::cout << "passing by r-value reference" << std::endl;
-}
-
-My::Vector<TestType> bar()
-{
-	return My::Vector<TestType>();
-}
-
 int main()
 {
-	//My::Vector<TestType> v1;
-	//My::Vector<TestType> v2 = std::move(v1);
+	My::Vector<TestType> v(3);
+	v = My::Vector<TestType>({ TestType({ 1, 2, 3 }, "hello"), TestType({ 4, 5, 6 }, "world") });
 
-	//My::Vector<TestType> v1;
-	//My::Vector<TestType> v2(std::move(v1));
+	std::cout << v << std::endl;
 
-	//My::Vector<TestType> v;
-	//foo(std::move(v));
+	v.pusk_back(TestType({ 7, 8, 9 }, "the world is mine"));
 
-	//foo(My::Vector<TestType>());
-	//foo(std::move(My::Vector<TestType>()));
-
-	//My::Vector<TestType> v = bar();
-
-	//My::Vector<TestType> v;
-	//v = My::Vector<TestType>();
+	std::cout << v << std::endl;
 
 	std::cin.get();
 

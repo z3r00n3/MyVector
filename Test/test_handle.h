@@ -8,9 +8,11 @@ public:
 	TestType();
 	TestType(std::initializer_list<int> list, const std::string& str);
 	TestType(const TestType& other);
+	TestType(TestType&& other);
 	~TestType();
 
 	TestType& operator=(const TestType& other);
+	TestType& operator=(TestType&& other);
 
 	friend std::ostream& operator<<(std::ostream& stream, const TestType& obj);
 	friend bool operator==(const TestType& lhs, const TestType& rhs);
