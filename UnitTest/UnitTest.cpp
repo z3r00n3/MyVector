@@ -1402,15 +1402,6 @@ namespace UnitTest
 			Assert::AreEqual(this_vector_copy, other);
 		}
 
-		TEST_METHOD(name)
-		{
-			// arrange
-
-			// act
-			
-			// assert
-		}
-
 		TEST_METHOD(equality_operator_comparison___different_sizes___returns_false)
 		{
 			// arrange
@@ -1445,6 +1436,32 @@ namespace UnitTest
 
 			// assert
 			Assert::IsTrue(v1 == v2);
+		}
+
+		TEST_METHOD(name)
+		{
+			// arrange
+
+			// act
+
+			// assert
+		}
+	};
+
+	TEST_CLASS(MyIteratorUnitTest)
+	{
+	public:
+		TEST_METHOD(operator_star___)
+		{
+			// arrange
+			TestType value1({ 1, 2, 3 }, "hello");
+			TestType value2({ 4, 5, 6 }, "world");
+			My::Vector<TestType> v({ value1, value2 });
+			//My::Vector<TestType>::iterator it;
+
+			// act
+
+			// assert
 		}
 	};
 }

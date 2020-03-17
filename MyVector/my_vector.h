@@ -6,10 +6,17 @@
 
 namespace My
 {
+	template<typename UserType> class Iterator;
+
+	///////////////////////////////////////////////////////////////////////////////
+	//                                 VECTOR                                    //
+	///////////////////////////////////////////////////////////////////////////////
 	template<typename UserType>
 	class Vector
 	{
 	public:
+		using iterator = typename Iterator<UserType>;
+
 		// Constructors and Destructor
 		Vector();
 		Vector(std::size_t size);
@@ -35,6 +42,10 @@ namespace My
 		const UserType& back() const;
 		      UserType* data();
 		const UserType* data() const;
+
+		// Iterators
+		iterator begin();
+		//iterator end();
 
 		// Capacity
 		bool empty() const;
@@ -565,6 +576,12 @@ namespace My
 		return _first;
 	}
 
+	template<typename UserType>
+	inline typename Vector<UserType>::iterator Vector<UserType>::begin()
+	{
+		return iterator(_first);
+	}
+
 	///////////////////////////////////////////////////////////////////////////////
 	//                                CAPACITY                                   //
 	///////////////////////////////////////////////////////////////////////////////
@@ -1084,6 +1101,40 @@ namespace My
 	//                        PRIVATE MEMBER FUNCTIONS                           //
 	///////////////////////////////////////////////////////////////////////////////
 
+	///////////////////////////////////////////////////////////////////////////////
+	//                                ITERATOR                                   //
+	///////////////////////////////////////////////////////////////////////////////
+	template<typename UserType>
+	class Iterator
+	{
+	public:
+		using iterator_category = typename std::random_access_iterator_tag;
+		using value_type        = typename UserType;
+		using difference_type   = typename UserType;
+		using pointer           = typename UserType*;
+		using reference         = typename UserType&;
 
+		Iterator(pointer);
 
+		value_type operator*() const;
+
+	private:
+		pointer element;
+	};
+
+	template<typename UserType>
+	Iterator<UserType>::Iterator(pointer ptr)
+		: element(ptr)
+	{
+#ifdef _DEBUG
+		std::cout << "(+) My::Iterator (pointer) constructor" << std::endl;
+		print_dividing_line();
+#endif // _DEBUG
+	}
+
+	template<typename UserType>
+	inline typename Iterator<UserType>::value_type Iterator<UserType>::operator*() const
+	{
+		return *element;
+	}
 }
