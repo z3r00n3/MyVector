@@ -1,12 +1,27 @@
 *******************************************************************************
 
+v 0.29a
+
+My::Iterator:
++ Вынесен в отдельный файл my_iterator.h
++ Реализован default ctor, (pointer) ctor, operator==(const &rhs), operator->(),
+
+My::Vector:
++ Реализован end()
+
+UnitTest:
++ Тесты для (pointer) ctor, operator*(), operator==(), operator->() из My::Iterator
++ Тесты для begin(), end() из My::Vector
+
+*******************************************************************************
+
 v 0.28a
 
 + Узнать про итераторы, понять их природу
 
 My::Iterator:
 + Начата реализация
-+ Реализован operator*() const
++ Реализован operator*()
 
 My::Vector:
 + Реализован begin()

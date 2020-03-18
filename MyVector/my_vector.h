@@ -1,20 +1,17 @@
 #pragma once
 
+#include "../MyVector/my_iterator.h"
 #include "../Test/test_handle.h"
 
 #include <iostream>
 
 namespace My
 {
-	template<typename UserType> class Iterator;
-
-	///////////////////////////////////////////////////////////////////////////////
-	//                                 VECTOR                                    //
-	///////////////////////////////////////////////////////////////////////////////
 	template<typename UserType>
 	class Vector
 	{
 	public:
+		// types
 		using iterator = typename Iterator<UserType>;
 
 		// Constructors and Destructor
@@ -45,7 +42,7 @@ namespace My
 
 		// Iterators
 		iterator begin();
-		//iterator end();
+		iterator end();
 
 		// Capacity
 		bool empty() const;
@@ -56,7 +53,7 @@ namespace My
 
 		// Modifiers
 		void push_back(const UserType& value);
-		void pusk_back(UserType&& value); 
+		void push_back(UserType&& value); 
 		void pop_back();
 		void clear();
 		void resize(std::size_t count);
@@ -576,10 +573,20 @@ namespace My
 		return _first;
 	}
 
+	///////////////////////////////////////////////////////////////////////////////
+	//                               ITERATORS                                   //
+	///////////////////////////////////////////////////////////////////////////////
+
 	template<typename UserType>
 	inline typename Vector<UserType>::iterator Vector<UserType>::begin()
 	{
 		return iterator(_first);
+	}
+
+	template<typename UserType>
+	inline typename Vector<UserType>::iterator Vector<UserType>::end()
+	{
+		return iterator(_last);
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -786,7 +793,7 @@ namespace My
 	}
 
 	template<typename UserType>
-	inline void Vector<UserType>::pusk_back(UserType&& value)
+	inline void Vector<UserType>::push_back(UserType&& value)
 	{
 #ifdef _DEBUG
 		std::cout << "My::Vector push_back(&& value)" << std::endl;
@@ -1100,41 +1107,4 @@ namespace My
 	///////////////////////////////////////////////////////////////////////////////
 	//                        PRIVATE MEMBER FUNCTIONS                           //
 	///////////////////////////////////////////////////////////////////////////////
-
-	///////////////////////////////////////////////////////////////////////////////
-	//                                ITERATOR                                   //
-	///////////////////////////////////////////////////////////////////////////////
-	template<typename UserType>
-	class Iterator
-	{
-	public:
-		using iterator_category = typename std::random_access_iterator_tag;
-		using value_type        = typename UserType;
-		using difference_type   = typename UserType;
-		using pointer           = typename UserType*;
-		using reference         = typename UserType&;
-
-		Iterator(pointer);
-
-		value_type operator*() const;
-
-	private:
-		pointer element;
-	};
-
-	template<typename UserType>
-	Iterator<UserType>::Iterator(pointer ptr)
-		: element(ptr)
-	{
-#ifdef _DEBUG
-		std::cout << "(+) My::Iterator (pointer) constructor" << std::endl;
-		print_dividing_line();
-#endif // _DEBUG
-	}
-
-	template<typename UserType>
-	inline typename Iterator<UserType>::value_type Iterator<UserType>::operator*() const
-	{
-		return *element;
-	}
 }

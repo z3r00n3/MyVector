@@ -11,6 +11,7 @@
 	- remove
 	- transform
 
+- typedef, typename и using
 - Поискать в методах My::Vector места, где имеет смысл использовать семантику
 перемещений
 - Реализовать юнит-тесты для TestType

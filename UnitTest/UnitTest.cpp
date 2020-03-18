@@ -2,6 +2,7 @@
 #include "CppUnitTest.h"
 
 #include "../MyVector/my_vector.h"
+#include "../MyVector/my_iterator.h"
 #include "../Test/test_handle.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -23,12 +24,27 @@ namespace Microsoft
 			{
 				return L"TestType";
 			}
+
+			template<>
+			std::wstring ToString<TestType>(TestType* t)
+			{
+				return L"TestType";
+			}
+
+			template<>
+			std::wstring ToString<My::Iterator<TestType>>(const My::Iterator<TestType>& it)
+			{
+				return L"My::Iterator<TestType>";
+			}
 		}
 	}
 }
 
 namespace UnitTest
 {
+	///////////////////////////////////////////////////////////////////////////////
+	//                                 VECTOR                                    //
+	///////////////////////////////////////////////////////////////////////////////
 	TEST_CLASS(MyVectorUnitTest)
 	{
 	public:
@@ -652,6 +668,66 @@ namespace UnitTest
 
 			// assert
 			Assert::AreEqual({ list_elem, list_elem }, v);
+		}
+
+		TEST_METHOD(begin___on_empty)
+		{
+			// arrange
+			My::Vector<TestType> v;
+			My::Vector<TestType>::iterator it_begin;
+			My::Vector<TestType>::iterator it_expected;
+
+			// act
+			it_expected = My::Iterator<TestType>();
+			it_begin    = v.begin();
+
+			// assert
+			Assert::AreEqual(it_expected, it_begin);
+		}
+
+		TEST_METHOD(begin___on_non_empty)
+		{
+			// arrange
+			My::Vector<TestType> v(3);
+			My::Vector<TestType>::iterator it_begin;
+			My::Vector<TestType>::iterator it_expected;
+
+			// act
+			it_expected = My::Iterator<TestType>(v.data());
+			it_begin    = v.begin();
+
+			// assert
+			Assert::AreEqual(it_expected, it_begin);
+		}
+
+		TEST_METHOD(end___on_empty)
+		{
+			// arrange
+			My::Vector<TestType> v;
+			My::Vector<TestType>::iterator it_end;
+			My::Vector<TestType>::iterator it_expected;
+
+			// act
+			it_expected = My::Iterator<TestType>(v.data() + v.size());
+			it_end      = v.end();
+
+			// assert
+			Assert::AreEqual(it_expected, it_end);
+		}
+
+		TEST_METHOD(end___on_non_empty)
+		{
+			// arrange
+			My::Vector<TestType> v(3);
+			My::Vector<TestType>::iterator it_end;
+			My::Vector<TestType>::iterator it_expected;
+
+			// act
+			it_expected = My::Iterator<TestType>(v.data() + v.size());
+			it_end      = v.end();
+
+			// assert
+			Assert::AreEqual(it_expected, it_end);
 		}
 
 		TEST_METHOD(empty___on_empty___returns_true)
@@ -1437,31 +1513,113 @@ namespace UnitTest
 			// assert
 			Assert::IsTrue(v1 == v2);
 		}
+	};
 
-		TEST_METHOD(name)
+	///////////////////////////////////////////////////////////////////////////////
+	//                                ITERATOR                                   //
+	///////////////////////////////////////////////////////////////////////////////
+	TEST_CLASS(MyIteratorUnitTest)
+	{
+	public:
+
+		TEST_METHOD(constructor_position)
 		{
 			// arrange
+			My::Vector<TestType> v(3);
+			My::Vector<TestType>::iterator it(v.data() + 1);
 
 			// act
 
 			// assert
+			Assert::AreSame(v[1], *it);
 		}
-	};
 
-	TEST_CLASS(MyIteratorUnitTest)
-	{
-	public:
-		TEST_METHOD(operator_star___)
+		TEST_METHOD(operator_star___read)
+		{
+			// arrange
+			My::Vector<TestType> v({ TestType({ 1, 2, 3 }, "hello"), TestType({ 4, 5, 6 }, "world") });
+			My::Vector<TestType>::iterator it;
+
+			// act
+			it = v.begin();
+
+			// assert
+			Assert::AreSame(v[0], *it);
+		}
+
+		TEST_METHOD(operator_star___write)
+		{
+			// arrange
+			My::Vector<TestType> v({ TestType({ 1, 2, 3 }, "hello"), TestType({ 4, 5, 6 }, "world") });
+			My::Vector<TestType>::iterator it = v.begin();
+
+			// act
+			*it = v[1];
+
+			// assert
+			Assert::AreEqual(v[0], v[1]);
+		}
+
+		TEST_METHOD(operator_arrow)
+		{
+			// arrange
+			TestType value1({ 1, 2, 3 }, "hello");
+			TestType value2({ 4, 5, 6 }, "world");
+			My::Iterator<TestType> it(&value1);
+
+			// act
+			it->operator=(value2);
+
+			// assert
+			Assert::AreEqual(value2, *it);
+		}
+
+		TEST_METHOD(operator_postfix_increment)
+		{
+			// arrange
+			My::Vector<TestType> v(3);
+			My::Iterator<TestType> it = v.begin();
+
+			// act
+			it++;
+
+			// assert
+			Assert::AreSame(v[1], *it);
+		}
+
+		TEST_METHOD(equality_operator_comparison___same_iterators___return_true)
 		{
 			// arrange
 			TestType value1({ 1, 2, 3 }, "hello");
 			TestType value2({ 4, 5, 6 }, "world");
 			My::Vector<TestType> v({ value1, value2 });
-			//My::Vector<TestType>::iterator it;
+			My::Vector<TestType>::iterator it1;
+			My::Vector<TestType>::iterator it2;
 
 			// act
+			it1 = v.begin();
+			it2 = v.begin();
 
 			// assert
+			Assert::IsTrue(it1 == it2);
+;		}
+
+		TEST_METHOD(equality_operator_comparison___different_iterators___return_false)
+		{
+			// arrange
+			TestType value1({ 1, 2, 3 }, "hello");
+			TestType value2({ 4, 5, 6 }, "world");
+			My::Vector<TestType> v1({ value1 });
+			My::Vector<TestType> v2({ value2 });
+			My::Vector<TestType>::iterator it1;
+			My::Vector<TestType>::iterator it2;
+
+			// act
+			it1 = v1.begin();
+			it2 = v2.begin();
+
+			// assert
+			Assert::IsFalse(it1 == it2);
 		}
 	};
 }
