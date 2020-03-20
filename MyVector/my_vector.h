@@ -18,9 +18,10 @@ namespace My
 		Vector();
 		Vector(std::size_t size);
 		Vector(std::size_t size, const UserType& value);
-		Vector(std::initializer_list<UserType> list);
+		Vector(iterator first, iterator last);
 		Vector(const Vector<UserType>& other);
 		Vector(Vector<UserType>&& other);
+		Vector(std::initializer_list<UserType> list);
 		~Vector();
 		
 		// Member functions
@@ -173,30 +174,32 @@ namespace My
 	}
 
 	template<typename UserType>
-	Vector<UserType>::Vector(std::initializer_list<UserType> list)
+	Vector<UserType>::Vector(My::Vector<UserType>::iterator first, My::Vector<UserType>::iterator last)
 		: _first(nullptr), _last(nullptr), _capacity_last(nullptr)
 	{
 #ifdef _DEBUG
-		std::cout << "(+) My::Vector (initialiser_list) constructor" << std::endl;
+		std::cout << "(+) My::Vector range construtor" << std::endl;
 		std::cout << "this: 0x" << this << std::endl;
 		print_dividing_line();
 #endif // _DEBUG
 
+		std::size_t size = last - first;
+
 		try
 		{
-			_first = static_cast<UserType*>(operator new(sizeof(UserType) * list.size()));
+			_first = static_cast<UserType*>(operator new(sizeof(UserType) * size));
 		}
 		catch (std::bad_alloc& e)
 		{
-			std::cerr << "My::Vector (initialiser_list) constructor: " << e.what() << std::endl;
+			std::cerr << "My::Vector range construtor: " << e.what() << std::endl;
 			throw;
 		}
 
-		for (std::size_t i = 0; i < list.size(); i++)
+		for (std::size_t i = 0; i < size; i++)
 		{
 			try
 			{
-				new(static_cast<void*>(_first + i)) UserType(*(list.begin() + i));
+				new(static_cast<void*>(_first + i)) UserType(*(first + i));
 			}
 			catch (...)
 			{
@@ -210,8 +213,8 @@ namespace My
 			}
 		}
 
-		_last          = _first + list.size();
-		_capacity_last = _first + list.size();
+		_last          = _first + size;
+		_capacity_last = _first + size;
 	}
 
 	template<typename UserType>
@@ -279,6 +282,48 @@ namespace My
 			other._last          = nullptr;
 			other._capacity_last = nullptr;
 		}
+	}
+
+	template<typename UserType>
+	Vector<UserType>::Vector(std::initializer_list<UserType> list)
+		: _first(nullptr), _last(nullptr), _capacity_last(nullptr)
+	{
+#ifdef _DEBUG
+		std::cout << "(+) My::Vector (initialiser_list) constructor" << std::endl;
+		std::cout << "this: 0x" << this << std::endl;
+		print_dividing_line();
+#endif // _DEBUG
+
+		try
+		{
+			_first = static_cast<UserType*>(operator new(sizeof(UserType) * list.size()));
+		}
+		catch (std::bad_alloc& e)
+		{
+			std::cerr << "My::Vector (initialiser_list) constructor: " << e.what() << std::endl;
+			throw;
+		}
+
+		for (std::size_t i = 0; i < list.size(); i++)
+		{
+			try
+			{
+				new(static_cast<void*>(_first + i)) UserType(*(list.begin() + i));
+			}
+			catch (...)
+			{
+				for (std::size_t j = 0; j < i; j++)
+				{
+					(_first + j)->~UserType();
+				}
+				operator delete(static_cast<void*>(_first));
+
+				throw;
+			}
+		}
+
+		_last = _first + list.size();
+		_capacity_last = _first + list.size();
 	}
 
 	template<typename UserType>
@@ -780,6 +825,7 @@ namespace My
 			_capacity_last = _first + new_capacity;
 		}
 		
+		// !!!
 		try
 		{
 			new(static_cast<void*>(_last)) UserType(value);
@@ -846,11 +892,12 @@ namespace My
 			}
 			operator delete(static_cast<void*>(_first));
 
-			_first = new_memory_ptr;
-			_last = _first + current_size;
+			_first         = new_memory_ptr;
+			_last          = _first + current_size;
 			_capacity_last = _first + new_capacity;
 		}
 
+		// !!!
 		try
 		{
 			new(static_cast<void*>(_last)) UserType(std::move(value));
@@ -943,7 +990,8 @@ namespace My
 			}
 
 			_last = _first + count;
-
+			
+			// !!!???
 			for (std::size_t i = current_size; i < count; i++)
 			{
 				try
@@ -1020,6 +1068,7 @@ namespace My
 
 			_last = _first + count;
 
+			// !!!???
 			for (std::size_t i = current_size; i < count; i++)
 			{
 				try

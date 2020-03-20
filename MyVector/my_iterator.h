@@ -21,12 +21,19 @@ namespace My
 		Iterator();
 		Iterator(pointer pos);
 
-		// Member functions
+		// Unary operators
 		reference operator*()  const;
 		pointer   operator->() const;
-		iterator& operator++();
+		iterator& operator++(int);
+		iterator& operator--(int);
 
-		bool      operator==(const Iterator& rhs) const;
+		// Binary operators
+		std::ptrdiff_t operator-(const Iterator& rhs) const;
+		iterator       operator+(const int rhs) const;
+
+		// Comparison operators
+		bool operator==(const Iterator& rhs) const;
+		bool operator!=(const Iterator& rhs) const;
 
 	private:
 		pointer _position;
@@ -59,7 +66,7 @@ namespace My
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
-	//                            MEMBER FUNCTIONS                               //
+	//                             UNARY OPERATORS                               //
 	///////////////////////////////////////////////////////////////////////////////
 
 	template<typename UserType>
@@ -75,7 +82,7 @@ namespace My
 	}
 
 	template<typename UserType>
-	inline typename Iterator<UserType>::iterator& Iterator<UserType>::operator++()
+	inline typename Iterator<UserType>::iterator& Iterator<UserType>::operator++(int)
 	{
 		_position++;
 
@@ -83,8 +90,42 @@ namespace My
 	}
 
 	template<typename UserType>
+	inline typename Iterator<UserType>::iterator& Iterator<UserType>::operator--(int)
+	{
+		_position--;
+
+		return *this;
+	}
+
+	///////////////////////////////////////////////////////////////////////////////
+	//                            BINARY OPERATORS                               //
+	///////////////////////////////////////////////////////////////////////////////
+
+	template<typename UserType>
+	inline std::ptrdiff_t Iterator<UserType>::operator-(const Iterator& rhs) const
+	{
+		return _position - rhs._position;
+	}
+
+	template<typename UserType>
+	inline typename Iterator<UserType>::iterator Iterator<UserType>::operator+(const int rhs) const
+	{
+		return iterator(_position + rhs);
+	}
+
+	///////////////////////////////////////////////////////////////////////////////
+	//                          COMPARISON OPERATORS                             //
+	///////////////////////////////////////////////////////////////////////////////
+
+	template<typename UserType>
 	inline bool Iterator<UserType>::operator==(const Iterator& rhs) const
 	{
 		return _position == rhs._position;
+	}
+
+	template<typename UserType>
+	inline bool Iterator<UserType>::operator!=(const Iterator& rhs) const
+	{
+		return !(_position == rhs._position);
 	}
 }

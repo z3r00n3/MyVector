@@ -1,17 +1,36 @@
 *******************************************************************************
 
+v 0.30a
+
+My::Iterator:
++ Реализован operator++(int), operator--(int), operator!=(), operator-(const& rhs),
+operator+(const int)
+
+My::Vector:
++ Реализован range ctor
+
+UnitTest:
+	My::Iterator:
+	+ Тесты для operator++(int), operator--(int), operator!=(), operator-(const& rhs),
+	operator+(const int)
+
+*******************************************************************************
+
 v 0.29a
 
 My::Iterator:
 + Вынесен в отдельный файл my_iterator.h
-+ Реализован default ctor, (pointer) ctor, operator==(const &rhs), operator->(),
++ Реализован default ctor, (pointer) ctor, operator==(const& rhs), operator->(),
 
 My::Vector:
 + Реализован end()
 
 UnitTest:
-+ Тесты для (pointer) ctor, operator*(), operator==(), operator->() из My::Iterator
-+ Тесты для begin(), end() из My::Vector
+	My::Iterator:
+	+ Тесты для (pointer) ctor, operator*(), operator==(const& rhs), operator->()
+	
+	My::Vector
+	+ Тесты для begin(), end()
 
 *******************************************************************************
 
