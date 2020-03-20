@@ -153,6 +153,103 @@ namespace UnitTest
 			Assert::AreEqual(value,             v.front());
 		}
 
+		TEST_METHOD(constructor_range___difference_between_first_and_last_is_0)
+		{
+			// arrange
+			TestType arr[3];
+			My::Iterator<TestType>::iterator it_first(&arr[0]);
+			My::Iterator<TestType>::iterator it_last(&arr[0]);
+			My::Vector<TestType> v(it_first, it_last);
+			std::size_t expected_size     = 0;
+			std::size_t expected_capacity = 0;
+
+			// act
+
+			// assert
+			Assert::AreEqual(expected_size, v.size());
+			Assert::AreEqual(expected_size, v.capacity());
+		}
+
+		TEST_METHOD(constructor_range___difference_between_first_and_last_is_1)
+		{
+			// arrange
+			TestType arr[3] = { TestType({ 1, 2, 3 }, "hello"), TestType({ 4, 5, 6 }, "world"), TestType() };
+			My::Iterator<TestType>::iterator it_first(&arr[0]);
+			My::Iterator<TestType>::iterator it_last(&arr[1]);
+			My::Vector<TestType> v(it_first, it_last);
+			std::size_t expected_size     = 1;
+			std::size_t expected_capacity = 1;
+
+			// act
+
+			// assert
+			Assert::AreEqual(expected_size, v.size());
+			Assert::AreEqual(expected_size, v.capacity());
+			Assert::AreEqual(*(v.begin()),   *it_first);
+			Assert::AreEqual(*(v.end() - 1), *(it_last - 1));
+		}
+
+		TEST_METHOD(constructor_range___difference_between_first_and_last_is_2)
+		{
+			// arrange
+			TestType arr[3] = { TestType({ 1, 2, 3 }, "hello"), TestType({ 4, 5, 6 }, "world"), TestType() };
+			My::Iterator<TestType>::iterator it_first(&arr[0]);
+			My::Iterator<TestType>::iterator it_last(&arr[2]);
+			My::Vector<TestType> v(it_first, it_last);
+			std::size_t expected_size     = 2;
+			std::size_t expected_capacity = 2;
+
+			// act
+
+			// assert
+			Assert::AreEqual(expected_size, v.size());
+			Assert::AreEqual(expected_size, v.capacity());
+			Assert::AreEqual(*(v.begin()),   *it_first);
+			Assert::AreEqual(*(v.end() - 1), *(it_last - 1));
+		}
+
+		TEST_METHOD(constructor_copy___other_size_is_0)
+		{
+			// arrange
+			My::Vector<TestType> other;
+			My::Vector<TestType> this_vector = other;
+			std::size_t expected_capacity = other.size();
+
+			// act
+
+			// assert
+			Assert::AreEqual(other,             this_vector);
+			Assert::AreEqual(expected_capacity, this_vector.capacity());
+		}
+
+		TEST_METHOD(constructor_copy___other_size_is_1)
+		{
+			// arrange
+			My::Vector<TestType> other(1, TestType({ 1, 2, 3 }, "hello"));
+			My::Vector<TestType> this_vector = other;
+			std::size_t expected_capacity = other.size();
+
+			// act
+
+			// assert
+			Assert::AreEqual(other,             this_vector);
+			Assert::AreEqual(expected_capacity, this_vector.capacity());
+		}
+
+		TEST_METHOD(constructor_copy___other_size_is_2)
+		{
+			// arrange
+			My::Vector<TestType> other(2, TestType({ 1, 2, 3 }, "hello"));
+			My::Vector<TestType> this_vector = other;
+			std::size_t expected_capacity = other.size();
+
+			// act
+
+			// assert
+			Assert::AreEqual(other,             this_vector);
+			Assert::AreEqual(expected_capacity, this_vector.capacity());
+		}
+
 		TEST_METHOD(constructor_init_list___list_size_is_0)
 		{
 			// arrange
@@ -199,48 +296,6 @@ namespace UnitTest
 			Assert::AreEqual(expected_capacity, v.capacity());
 			Assert::AreEqual(list_elem_1,       v.front());
 			Assert::AreEqual(list_elem_2,       v.back());
-		}
-
-		TEST_METHOD(copy_constructor___other_size_is_0)
-		{
-			// arrange
-			My::Vector<TestType> other;
-			My::Vector<TestType> this_vector = other;
-			std::size_t expected_capacity = other.size();
-
-			// act
-
-			// assert
-			Assert::AreEqual(other,             this_vector);
-			Assert::AreEqual(expected_capacity, this_vector.capacity());
-		}
-
-		TEST_METHOD(copy_constructor___other_size_is_1)
-		{
-			// arrange
-			My::Vector<TestType> other(1, TestType({ 1, 2, 3 }, "hello"));
-			My::Vector<TestType> this_vector = other;
-			std::size_t expected_capacity = other.size();
-
-			// act
-
-			// assert
-			Assert::AreEqual(other,             this_vector);
-			Assert::AreEqual(expected_capacity, this_vector.capacity());
-		}
-
-		TEST_METHOD(copy_constructor___other_size_is_2)
-		{
-			// arrange
-			My::Vector<TestType> other(2, TestType({ 1, 2, 3 }, "hello"));
-			My::Vector<TestType> this_vector = other;
-			std::size_t expected_capacity = other.size();
-
-			// act
-
-			// assert
-			Assert::AreEqual(other,             this_vector);
-			Assert::AreEqual(expected_capacity, this_vector.capacity());
 		}
 
 		TEST_METHOD(operator_copy_assignment_other___this_size_less_other_and_this_cap_less_other)
@@ -1564,7 +1619,7 @@ namespace UnitTest
 			// arrange
 			TestType value1({ 1, 2, 3 }, "hello");
 			TestType value2({ 4, 5, 6 }, "world");
-			My::Iterator<TestType> it(&value1);
+			My::Iterator<TestType>::iterator it(&value1);
 
 			// act
 			it->operator=(value2);
@@ -1603,13 +1658,13 @@ namespace UnitTest
 		{
 			// arrange
 			My::Vector<TestType> v(3);
-			My::Vector<TestType>::iterator it1 = v.begin();
-			My::Vector<TestType>::iterator it2 = v.end();
+			My::Vector<TestType>::iterator it_lhs = v.begin();
+			My::Vector<TestType>::iterator it_rhs = v.end();
 			std::ptrdiff_t expected_value = -(static_cast<std::ptrdiff_t>(v.size()));
 			std::ptrdiff_t actual_value;
 
 			// act
-			actual_value = it1 - it2;
+			actual_value = it_lhs - it_rhs;
 
 			// assert
 			Assert::AreEqual(expected_value, actual_value);
@@ -1619,13 +1674,13 @@ namespace UnitTest
 		{
 			// arrange
 			My::Vector<TestType> v(3);
-			My::Vector<TestType>::iterator it1 = v.begin();
-			My::Vector<TestType>::iterator it2 = v.begin();
+			My::Vector<TestType>::iterator it_lhs = v.begin();
+			My::Vector<TestType>::iterator it_rhs = v.begin();
 			std::ptrdiff_t expected_value = 0;
 			std::ptrdiff_t actual_value;
 
 			// act
-			actual_value = it1 - it2;
+			actual_value = it_lhs - it_rhs;
 
 			// assert
 			Assert::AreEqual(expected_value, actual_value);
@@ -1635,13 +1690,13 @@ namespace UnitTest
 		{
 			// arrange
 			My::Vector<TestType> v(3);
-			My::Vector<TestType>::iterator it1 = v.end();
-			My::Vector<TestType>::iterator it2 = v.begin();
+			My::Vector<TestType>::iterator it_lhs = v.end();
+			My::Vector<TestType>::iterator it_rhs = v.begin();
 			std::ptrdiff_t expected_value = v.size();
 			std::ptrdiff_t actual_value;
 
 			// act
-			actual_value = it1 - it2;
+			actual_value = it_lhs - it_rhs;
 
 			// assert
 			Assert::AreEqual(expected_value, actual_value);
@@ -1652,12 +1707,15 @@ namespace UnitTest
 			// arrange
 			My::Vector<TestType> v(3);
 			My::Vector<TestType>::iterator it = v.begin();
+			My::Vector<TestType>::iterator it_expected(&v[1]);
+			My::Vector<TestType>::iterator it_actual;
 
 			// act
-			it = it + 1;
+			it_actual = it + 1;
 
 			// assert
-			Assert::AreSame(v[1], *it);
+			Assert::AreSame(*(v.begin()), *it);
+			Assert::AreSame(*it_expected, *it_actual);
 		}
 
 		TEST_METHOD(operator_addition_int___negative_int)
@@ -1665,12 +1723,47 @@ namespace UnitTest
 			// arrange
 			My::Vector<TestType> v(3);
 			My::Vector<TestType>::iterator it = v.end();
+			My::Vector<TestType>::iterator it_expected(&v[1]);
+			My::Vector<TestType>::iterator it_actual;
 
 			// act
-			it = it + (-2);
+			it_actual = it + (-2);
 
 			// assert
-			Assert::AreSame(v[1], *it);
+			Assert::AreSame(*(v.end()),   *it);
+			Assert::AreSame(*it_expected, *it_actual);
+		}
+
+		TEST_METHOD(operator_subtruct_int___positive_int)
+		{
+			// arrange
+			My::Vector<TestType> v(3);
+			My::Vector<TestType>::iterator it = v.end();
+			My::Vector<TestType>::iterator it_expected(&v[1]);
+			My::Vector<TestType>::iterator it_actual;
+
+			// act
+			it_actual = it - 2;
+			
+			// assert
+			Assert::AreSame(*(v.end()),   *it);
+			Assert::AreSame(*it_expected, *it_actual);
+		}
+
+		TEST_METHOD(operator_subtruct_int___negative_int)
+		{
+			// arrange
+			My::Vector<TestType> v(3);
+			My::Vector<TestType>::iterator it = v.begin();
+			My::Vector<TestType>::iterator it_expected(&v[2]);
+			My::Vector<TestType>::iterator it_actual;
+
+			// act
+			it_actual = it - (-2);
+
+			// assert
+			Assert::AreSame(*(v.begin()), *it);
+			Assert::AreSame(*it_expected, *it_actual);
 		}
 
 		TEST_METHOD(operator_equality_comparison___same_iterators___return_true)

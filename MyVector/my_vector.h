@@ -322,7 +322,7 @@ namespace My
 			}
 		}
 
-		_last = _first + list.size();
+		_last          = _first + list.size();
 		_capacity_last = _first + list.size();
 	}
 
@@ -639,16 +639,9 @@ namespace My
 	///////////////////////////////////////////////////////////////////////////////
 
 	template<typename UserType>
-	bool Vector<UserType>::empty() const
+	inline bool Vector<UserType>::empty() const
 	{
-		bool is_empty = false;
-
-		if (_last == _first)
-		{
-			is_empty = true;
-		}
-
-		return is_empty;
+		return _last == _first;
 	}
 
 	template<typename UserType>
@@ -825,16 +818,7 @@ namespace My
 			_capacity_last = _first + new_capacity;
 		}
 		
-		// !!!
-		try
-		{
-			new(static_cast<void*>(_last)) UserType(value);
-		}
-		catch (...)
-		{
-			throw;
-		}
-
+		new(static_cast<void*>(_last)) UserType(value);
 		_last++;
 	}
 
@@ -897,16 +881,7 @@ namespace My
 			_capacity_last = _first + new_capacity;
 		}
 
-		// !!!
-		try
-		{
-			new(static_cast<void*>(_last)) UserType(std::move(value));
-		}
-		catch (...)
-		{
-			throw;
-		}
-
+		new(static_cast<void*>(_last)) UserType(std::move(value));
 		_last++;
 	}
 
@@ -980,7 +955,10 @@ namespace My
 
 						throw;
 					}
+				}
 
+				for (std::size_t i = 0; i < current_size; i++)
+				{
 					(_first + i)->~UserType();
 				}
 				operator delete(static_cast<void*>(_first));
@@ -991,7 +969,6 @@ namespace My
 
 			_last = _first + count;
 			
-			// !!!???
 			for (std::size_t i = current_size; i < count; i++)
 			{
 				try
@@ -1000,6 +977,8 @@ namespace My
 				}
 				catch (...)
 				{
+					_last = _first + i;
+
 					throw;
 				}
 			}
@@ -1057,7 +1036,10 @@ namespace My
 
 						throw;
 					}
+				}
 
+				for (std::size_t i = 0; i < current_size; i++)
+				{
 					(_first + i)->~UserType();
 				}
 				operator delete(static_cast<void*>(_first));
@@ -1068,7 +1050,6 @@ namespace My
 
 			_last = _first + count;
 
-			// !!!???
 			for (std::size_t i = current_size; i < count; i++)
 			{
 				try
@@ -1077,6 +1058,8 @@ namespace My
 				}
 				catch (...)
 				{
+					_last = _first + i;
+
 					throw;
 				}
 			}

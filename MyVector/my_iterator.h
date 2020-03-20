@@ -30,6 +30,7 @@ namespace My
 		// Binary operators
 		std::ptrdiff_t operator-(const Iterator& rhs) const;
 		iterator       operator+(const int rhs) const;
+		iterator       operator-(const int rhs) const;
 
 		// Comparison operators
 		bool operator==(const Iterator& rhs) const;
@@ -111,6 +112,12 @@ namespace My
 	inline typename Iterator<UserType>::iterator Iterator<UserType>::operator+(const int rhs) const
 	{
 		return iterator(_position + rhs);
+	}
+
+	template<typename UserType>
+	inline typename Iterator<UserType>::iterator Iterator<UserType>::operator-(const int rhs) const
+	{
+		return iterator(_position - rhs);
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
