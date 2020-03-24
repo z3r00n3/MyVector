@@ -7,16 +7,9 @@
 
 int main()
 {
-	My::Vector<TestType> v(5, TestType({ 1, 2, 3 }, "hello"));
+	My::Vector<TestType> v(1, TestType({ 1, 2, 3 }, "hello"));
 
-	try
-	{
-		v.resize(10, TestType({ 1, 2, 3 }, "hello"));
-	}
-	catch (...)
-	{
-		std::cerr << "ooops" << std::endl;
-	}
+	v.reserve(3);
 
 	std::cin.get();
 

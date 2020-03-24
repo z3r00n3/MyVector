@@ -683,7 +683,7 @@ namespace My
 			{
 				try
 				{
-					new(static_cast<void*>(new_memory_ptr + i)) UserType(*(_first + i));
+					new(static_cast<void*>(new_memory_ptr + i)) UserType(std::move(*(_first + i)));
 				}
 				catch (...)
 				{
@@ -695,7 +695,10 @@ namespace My
 
 					throw;
 				}
+			}
 
+			for (std::size_t i = 0; i < current_size; i++)
+			{
 				(_first + i)->~UserType();
 			}
 			operator delete(static_cast<void*>(_first));
@@ -732,7 +735,7 @@ namespace My
 			{
 				try
 				{
-					new(static_cast<void*>(new_memory_ptr + i)) UserType(*(_first + i));
+					new(static_cast<void*>(new_memory_ptr + i)) UserType(std::move(*(_first + i)));
 				}
 				catch (...)
 				{
@@ -744,7 +747,10 @@ namespace My
 
 					throw;
 				}
+			}
 
+			for (std::size_t i = 0; i < current_size; i++)
+			{
 				(_first + i)->~UserType();
 			}
 			operator delete(static_cast<void*>(_first));
@@ -796,7 +802,7 @@ namespace My
 			{
 				try
 				{
-					new(static_cast<void*>(new_memory_ptr + i)) UserType(*(_first + i));
+					new(static_cast<void*>(new_memory_ptr + i)) UserType(std::move(*(_first + i)));
 				}
 				catch (...)
 				{
@@ -808,7 +814,10 @@ namespace My
 
 					throw;
 				}
+			}
 
+			for (std::size_t i = 0; i < current_size; i++)
+			{
 				(_first + i)->~UserType();
 			}
 			operator delete(static_cast<void*>(_first));
@@ -859,7 +868,7 @@ namespace My
 			{
 				try
 				{
-					new(static_cast<void*>(new_memory_ptr + i)) UserType(*(_first + i));
+					new(static_cast<void*>(new_memory_ptr + i)) UserType(std::move(*(_first + i)));
 				}
 				catch (...)
 				{
@@ -871,7 +880,10 @@ namespace My
 
 					throw;
 				}
+			}
 
+			for (std::size_t i = 0; i < current_size; i++)
+			{
 				(_first + i)->~UserType();
 			}
 			operator delete(static_cast<void*>(_first));
@@ -943,7 +955,7 @@ namespace My
 				{
 					try
 					{
-						new(static_cast<void*>(new_memory_ptr + i)) UserType(*(_first + i));
+						new(static_cast<void*>(new_memory_ptr + i)) UserType(std::move(*(_first + i)));
 					}
 					catch (...)
 					{
@@ -1024,7 +1036,7 @@ namespace My
 				{
 					try
 					{
-						new(static_cast<void*>(new_memory_ptr + i)) UserType(*(_first + i));
+						new(static_cast<void*>(new_memory_ptr + i)) UserType(std::move(*(_first + i)));
 					}
 					catch (...)
 					{
