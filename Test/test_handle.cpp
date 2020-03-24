@@ -24,18 +24,28 @@ TestType::TestType(std::initializer_list<int> list, const std::string& str)
 	try
 	{
 		_arr = new int[list.size()];
-
-		for (std::size_t i = 0; i < list.size(); i++)
-		{
-			*(_arr + i) = *(list.begin() + i);
-		}
-
-		_arr_size = list.size();
-		_str      = str;
 	}
 	catch (std::bad_alloc& e)
 	{
 		std::cerr << "TestType: " << e.what() << std::endl;
+		throw;
+	}
+
+	for (std::size_t i = 0; i < list.size(); i++)
+	{
+		*(_arr + i) = *(list.begin() + i);
+	}
+
+	_arr_size = list.size();
+	
+	try
+	{
+		_str = str;
+	}
+	catch (...)
+	{
+		delete[] _arr;
+		
 		throw;
 	}
 }
@@ -54,18 +64,28 @@ TestType::TestType(const TestType& other)
 		try
 		{
 			_arr = new int[other._arr_size];
-
-			for (std::size_t i = 0; i < other._arr_size; i++)
-			{
-				*(_arr + i) = *(other._arr + i);
-			}
-
-			_arr_size = other._arr_size;
-			_str      = other._str;
 		}
 		catch (std::bad_alloc& e)
 		{
 			std::cerr << "TestType: " << e.what() << std::endl;
+			throw;
+		}
+
+		for (std::size_t i = 0; i < other._arr_size; i++)
+		{
+			*(_arr + i) = *(other._arr + i);
+		}
+
+		_arr_size = other._arr_size;
+		
+		try
+		{
+			_str = other._str;
+		}
+		catch (...)
+		{
+			delete[] _arr;
+
 			throw;
 		}
 	}
@@ -84,11 +104,10 @@ TestType::TestType(TestType&& other)
 	{
 		_arr      = other._arr;
 		_arr_size = other._arr_size;
-		_str      = other._str;
+		_str      = std::move(other._str);
 
 		other._arr      = nullptr;
 		other._arr_size = 0;
-		other._str      = "";
 	}
 }
 
@@ -115,27 +134,30 @@ TestType& TestType::operator=(const TestType& other)
 	{
 		if (_arr_size < other._arr_size)
 		{
+			int* new_memory_ptr = nullptr;
+
 			try
 			{
-				int* new_memory_ptr = new int[other._arr_size];
-
-				for (std::size_t i = 0; i < other._arr_size; i++)
-				{
-					*(new_memory_ptr + i) = *(other._arr + i);
-				}
-
-				delete[] _arr;
-
-				_arr      = new_memory_ptr;
-				_arr_size = other._arr_size;
-				_str      = other._str;
+				new_memory_ptr = new int[other._arr_size];
 			}
 			catch (std::bad_alloc& e)
 			{
 				std::cerr << "TestType: " << e.what() << std::endl;
 				throw;
 			}
+
+			for (std::size_t i = 0; i < other._arr_size; i++)
+			{
+				*(new_memory_ptr + i) = *(other._arr + i);
+			}
+
+			delete[] _arr;
+
+			_arr      = new_memory_ptr;
+			_arr_size = other._arr_size;
+			_str      = other._str;
 		}
+
 		if (_arr_size == other._arr_size)
 		{
 			for (std::size_t i = 0; i < other._arr_size; i++)
@@ -145,6 +167,7 @@ TestType& TestType::operator=(const TestType& other)
 
 			_str = other._str;
 		}
+
 		if (_arr_size > other._arr_size)
 		{
 			for (std::size_t i = 0; i < other._arr_size; i++)
@@ -174,11 +197,10 @@ TestType& TestType::operator=(TestType&& other)
 
 		_arr      = other._arr;
 		_arr_size = other._arr_size;
-		_str      = other._str;
+		_str      = std::move(other._str);
 
 		other._arr      = nullptr;
 		other._arr_size = 0;
-		other._str      = "";
 	}
 
 	return *this;

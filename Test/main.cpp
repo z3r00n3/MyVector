@@ -3,16 +3,25 @@
 #include <iostream>
 #include <string>
 
+void foo()
+{
+	TestType t1({ 1, 2, 3 }, "hello");
+	TestType t2 = t1;
+}
+
 int main()
 {
-	//TestType test1({ 1, 2, 3 }, "hello");
-	//TestType test2(std::move(TestType({ 1, 2, 3 }, "hello")));
-	//TestType test3;
 
-	TestType test;
-	test = TestType({ 1, 2, 3 }, "hello");
+	try
+	{
+		foo();
+	}
+	catch (...)
+	{
 
-	std::cout << test << std::endl;
+	}
+
+	std::cin.get();
 
 	return 0;
 }

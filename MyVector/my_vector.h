@@ -54,7 +54,7 @@ namespace My
 
 		// Modifiers
 		void push_back(const UserType& value);
-		void push_back(UserType&& value); 
+		void push_back(UserType&& value);
 		void pop_back();
 		void clear();
 		void resize(std::size_t count);
