@@ -9,6 +9,8 @@
 	- remove
 	- transform
 
+- —равнить поведение operator=() у My::Vector и std::vector, чтобы вы€снить
+изменени€ значений size и capacity, переделать operator=()
 - typedef, typename и using
 - –еализовать юнит-тесты дл€ TestType, недостающие тесты дл€ My::Vector
 - ”брать перегрузки операторов из friend (???)

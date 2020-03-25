@@ -60,6 +60,7 @@ namespace My
 		void resize(std::size_t count);
 		void resize(std::size_t count, const UserType& value);
 		void swap(Vector<UserType>& other);
+		iterator insert(iterator pos, const UserType& value);
 	
 		// Friend functions
 		template<typename UserType> friend std::ostream& operator<<(std::ostream& os, const Vector<UserType>& vec);
@@ -346,6 +347,49 @@ namespace My
 	//                            MEMBER FUNCTIONS                               //
 	///////////////////////////////////////////////////////////////////////////////
 
+	//template<typename UserType>
+	//Vector<UserType>& Vector<UserType>::operator=(const Vector<UserType>& other)
+	//{
+	//	if (this != &other)
+	//	{
+	//		if (size() != other.size())
+	//		{
+	//			if ((size() < other.size()) && (capacity() < other.capacity()))
+	//			{
+	//				for (std::size_t i = 0; i < size(); i++)
+	//				{
+	//					(_first + i)->~UserType();
+	//				}
+	//				operator delete(static_cast<void*>(_first));
+
+	//				try
+	//				{
+	//					_first = static_cast<UserType*>(operator new(sizeof(UserType) * other.size()));
+	//				}
+	//				catch (std::bad_alloc& e)
+	//				{
+	//					std::cerr << "My::Vector operator=(& other): " << e.what() << std::endl;
+	//					throw;
+	//				}
+
+	//				for (std::size_t i = 0; i < other.size(); i++)
+	//				{
+	//					try
+	//					{
+	//						new(static_cast<void*>(_first + i)) UserType(*(other.data() + i));
+	//					}
+	//					catch
+	//					{
+
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
+
+	//	return *this;
+	//}
+
 	template<typename UserType>
 	Vector<UserType>& Vector<UserType>::operator=(const Vector<UserType>& other)
 	{
@@ -361,7 +405,7 @@ namespace My
 			{
 				std::size_t new_capacity = 0;
 
-				if (size() < other.size() && capacity() < other.capacity())
+				if ((size() < other.size()) && (capacity() < other.capacity()))
 				{
 					new_capacity = other.size();
 				}
@@ -1102,6 +1146,46 @@ namespace My
 		other._first         = tmp_first;
 		other._last          = tmp_last;
 		other._capacity_last = tmp_capacity_last;
+	}
+
+	template<typename UserType>
+	typename Vector<UserType>::iterator Vector<UserType>::insert(iterator pos, const UserType& value)
+	{
+#ifdef _DEBUG
+		std::cout << "My::Vector insert(iterator, const& value)" << std::endl;
+#endif // _DEBUG
+
+		if (capacity() == size())
+		{
+			std::size_t current_size = size();
+			std::size_t new_capacity = 0;
+
+			if (current_size > 1)
+			{
+				new_capacity = static_cast<std::size_t>(current_size * _capacity_multiplier);
+			}
+			else
+			{
+				new_capacity = current_size + 1;
+			}
+
+			UserType* new_memory_ptr = nullptr;
+
+			try
+			{
+				new_memory_ptr = static_cast<UserType*>(operator new(sizeof(UserType) * new_capacity));
+			}
+			catch (std::bad_alloc& e)
+			{
+				std::cerr << "My::Vector insert(iterator, const& value): " << e.what() << std::endl;
+				throw;
+			}
+
+			for (std::size_t i = 0; i < current_size; i++)
+			{
+
+			}
+		}
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////
