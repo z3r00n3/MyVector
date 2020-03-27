@@ -175,7 +175,7 @@ namespace My
 	}
 
 	template<typename UserType>
-	Vector<UserType>::Vector(My::Vector<UserType>::iterator first, My::Vector<UserType>::iterator last)
+	Vector<UserType>::Vector(iterator first, iterator last)
 		: _first(nullptr), _last(nullptr), _capacity_last(nullptr)
 	{
 #ifdef _DEBUG
@@ -346,49 +346,6 @@ namespace My
 	///////////////////////////////////////////////////////////////////////////////
 	//                            MEMBER FUNCTIONS                               //
 	///////////////////////////////////////////////////////////////////////////////
-
-	//template<typename UserType>
-	//Vector<UserType>& Vector<UserType>::operator=(const Vector<UserType>& other)
-	//{
-	//	if (this != &other)
-	//	{
-	//		if (size() != other.size())
-	//		{
-	//			if ((size() < other.size()) && (capacity() < other.capacity()))
-	//			{
-	//				for (std::size_t i = 0; i < size(); i++)
-	//				{
-	//					(_first + i)->~UserType();
-	//				}
-	//				operator delete(static_cast<void*>(_first));
-
-	//				try
-	//				{
-	//					_first = static_cast<UserType*>(operator new(sizeof(UserType) * other.size()));
-	//				}
-	//				catch (std::bad_alloc& e)
-	//				{
-	//					std::cerr << "My::Vector operator=(& other): " << e.what() << std::endl;
-	//					throw;
-	//				}
-
-	//				for (std::size_t i = 0; i < other.size(); i++)
-	//				{
-	//					try
-	//					{
-	//						new(static_cast<void*>(_first + i)) UserType(*(other.data() + i));
-	//					}
-	//					catch
-	//					{
-
-	//					}
-	//				}
-	//			}
-	//		}
-	//	}
-
-	//	return *this;
-	//}
 
 	template<typename UserType>
 	Vector<UserType>& Vector<UserType>::operator=(const Vector<UserType>& other)
@@ -816,7 +773,7 @@ namespace My
 		std::cout << "My::Vector push_back(const& value)" << std::endl;
 #endif // _DEBUG
 
-		if (capacity() == size())
+		if (size() == capacity())
 		{
 			std::size_t current_size = size();
 			std::size_t new_capacity = 0;
@@ -882,7 +839,7 @@ namespace My
 		std::cout << "My::Vector push_back(&& value)" << std::endl;
 #endif // _DEBUG
 
-		if (capacity() == size())
+		if (size() == capacity())
 		{
 			std::size_t current_size = size();
 			std::size_t new_capacity = 0;
@@ -1155,7 +1112,118 @@ namespace My
 		std::cout << "My::Vector insert(iterator, const& value)" << std::endl;
 #endif // _DEBUG
 
-		if (capacity() == size())
+		if (size() == capacity())
+		{
+			std::size_t current_size = size();
+			std::size_t new_capacity = 0;
+
+			if (current_size > 1)
+			{
+				new_capacity = static_cast<std::size_t>(current_size * _capacity_multiplier);
+			}
+			else
+			{
+				new_capacity = current_size + 1;
+			}
+
+			UserType* new_memory_ptr = nullptr;
+
+			try
+			{
+				new_memory_ptr = static_cast<UserType*>(operator new(sizeof(UserType) * new_capacity));
+			}
+			catch (std::bad_alloc& e)
+			{
+				std::cerr << "My::Vector insert(iterator, const& value): " << e.what() << std::endl;
+				throw;
+			}
+
+			for (std::size_t i = 0, j = 0; i < current_size; i++, j++)
+			{
+				if ((_first + i) == &(*pos))
+				{
+					new(static_cast<void*>(new_memory_ptr + j)) UserType(value);
+
+					i--;
+
+					continue;
+				}
+
+				try
+				{
+					new(static_cast<void*>(new_memory_ptr + j)) UserType(std::move(*(_first + i)));
+				}
+				catch (...)
+				{
+					for (std::size_t k = 0; k < ?; k++)
+					{
+
+					}
+				}
+			}
+
+			//for (iterator it = begin(); it != pos; it++)
+			//for (std::size_t i = 0; (_first + i) != &(*pos); i++)
+			//{
+			//	try
+			//	{
+			//		new(static_cast<void*>(new_memory_ptr + i)) UserType(std::move(*(_first + i)));
+			//	}
+			//	catch (...)
+			//	{
+			//		for (std::size_t j = 0; j < i; j++)
+			//		{
+			//			(new_memory_ptr + j)->~UserType();
+			//		}
+			//		operator delete(static_cast<void*>(new_memory_ptr));
+
+			//		throw;
+			//	}
+			//}
+		}
+
+		UserType buffer1;
+		UserType buffer2 = value;
+		UserType* buffer_in_ptr  = &buffer2;
+		UserType* buffer_out_ptr = &buffer1;
+
+		for (iterator it = pos; it != end(); it++)
+		{
+			if (buffer_in_ptr == &buffer1)
+			{
+				buffer_in_ptr  = &buffer2;
+				buffer_out_ptr = &buffer1;
+			}
+			else
+			{
+				buffer_in_ptr  = &buffer1;
+				buffer_out_ptr = &buffer2;
+			}
+
+			*buffer_in_ptr = std::move(*it);
+			*it = std::move(*buffer_out_ptr);
+
+			//std::cout << "buffer_in address:\t 0x" << buffer_in_ptr  << std::endl;
+			//std::cout << "buffer_out address:\t 0x" << buffer_out_ptr << std::endl << std::endl;
+		}
+
+		new(static_cast<void*>(_last)) UserType(std::move(*buffer_in_ptr));
+		_last++;
+
+		return pos;
+
+		//UserType buffer1 = std::move(*pos);
+		//UserType buffer2;
+		//*pos = value;
+
+		//for (UserType* current_elem_ptr = &(*(pos + 1)); current_elem_ptr != _last; current_elem_ptr++)
+		//{
+		//	*current_elem_ptr = std::move(buffer);
+		//	buffer = std::move(*(current_elem_ptr + 1));
+		//}
+
+
+		/*if (capacity() == size())
 		{
 			std::size_t current_size = size();
 			std::size_t new_capacity = 0;
@@ -1183,9 +1251,51 @@ namespace My
 
 			for (std::size_t i = 0; i < current_size; i++)
 			{
+				try
+				{
+					new(static_cast<void*>(new_memory_ptr + i)) UserType(std::move(*(_first + i)));
+				}
+				catch (...)
+				{
+					for (std::size_t j = 0; j < i; j++)
+					{
+						(new_memory_ptr + j)->~UserType();
+					}
+					operator delete(static_cast<void*>(new_memory_ptr));
 
+					throw;
+				}
+
+				if (pos == iterator(_first + i))
+				{
+					pos = iterator(new_memory_ptr + i);
+				}
 			}
+
+			for (std::size_t i = 0; i < current_size; i++)
+			{
+				(_first + i)->~UserType();
+			}
+			operator delete(static_cast<void*>(_first));
+
+			_first         = new_memory_ptr;
+			_last          = _first + current_size;
+			_capacity_last = _first + new_capacity;
 		}
+
+		UserType buffer = std::move(*pos);
+		*pos = value;
+		
+		for (iterator it = pos + 1; it != (end() - 1); it++)
+		{
+			*it    = std::move(buffer);
+			buffer = std::move(*(it + 1));
+		}
+
+		new(static_cast<void*>(_last)) UserType(std::move(buffer));
+		_last++;
+
+		return pos;*/
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////
